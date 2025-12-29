@@ -12,8 +12,8 @@ body {
 
 a {
     text-decoration: none !important;
-    color: #ff0000 !important;
-    font-size: 20px;
+    color: #fff !important;
+    font-size: 18px;
     font-weight:bold;
 }
 
@@ -308,6 +308,7 @@ header nav {
         right: 10%;
     }
 }
+
 
 
 
