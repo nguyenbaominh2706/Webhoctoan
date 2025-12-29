@@ -70,29 +70,34 @@ header nav {
 .carousel .list .item .content {
     position: absolute;
     top: 20%;
-    width: 1140px;
-    max-width: 80%;
-    /* Căn văn bản hợp lý bên trái */
-    left: 10%;
+    /* Xích văn bản sang trái nhiều hơn */
+    left: 5%;
+    width: 45%;
+    max-width: 600px;
     transform: none;
-    padding-right: 40%;
     box-sizing: border-box;
-    color: #fff;
-    text-shadow: 0 5px 10px #0004;
+    /* Đổi màu chữ sang đen */
+    color: #000;
+    text-shadow: 0 2px 5px rgba(255, 255, 255, 0.5);
+    /* Thêm background để nổi bật text */
+    background: rgba(255, 255, 255, 0.85);
+    padding: 30px;
+    border-radius: 15px;
+    backdrop-filter: blur(10px);
 }
 
 .carousel .list .item .content .author {
     font-weight: bold;
     letter-spacing: 10px;
+    color: #000;
 }
 
 .carousel .list .item .content .title,
 .carousel .list .item .content .topic {
     font-weight: bold;
-    font-size: 5em;
+    font-size: 3em;
     line-height: 1.3em;
-    /* Giữ tiêu đề trên một hàng */
-    white-space: nowrap;
+    color: #000;
 }
 
 .carousel .list .item .content .topic {
@@ -103,7 +108,9 @@ header nav {
     margin-top: 20px;
     margin-bottom: 20px;
     line-height: 1.5em;
-    font-size: 1.2em;
+    font-size: 1em;
+    color: #000;
+    text-align: justify;
 }
 
 .carousel .list .item .content .buttons {
@@ -128,13 +135,13 @@ header nav {
 }
 
 .carousel .list .item .content .buttons .btn-primary {
-    background-color: #eee;
-    color: #000 !important;
+    background-color: #f1683a;
+    color: #fff !important;
     border: none;
 }
 
 .carousel .list .item .content .buttons .btn-primary:hover {
-    background-color: #f1683a;
+    background-color: #d85534;
     color: #fff !important;
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(241, 104, 58, 0.4);
@@ -142,23 +149,23 @@ header nav {
 
 .carousel .list .item .content .buttons .btn-secondary {
     background-color: transparent;
-    color: #eee;
-    border: 1px solid #eee;
+    color: #000 !important;
+    border: 2px solid #000;
 }
 
 .carousel .list .item .content .buttons .btn-secondary:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-    border-color: #f1683a;
-    color: #f1683a;
+    background-color: #000;
+    border-color: #000;
+    color: #fff !important;
     transform: translateY(-2px);
 }
 
 /* thumbnail */
 .thumbnail {
     position: absolute;
+    /* Di chuyển thumbnail sang phải hơn */
     bottom: 50px;
-    /* Di chuyển thumbnail sang phải vừa phải */
-    right: 8%;
+    right: 5%;
     left: auto;
     transform: none;
     width: max-content;
@@ -173,18 +180,26 @@ header nav {
     flex-shrink: 0;
     position: relative;
     cursor: pointer;
-    transition: transform 0.3s ease;
+    transition: all 0.3s ease;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
 }
 
 .thumbnail .item:hover {
-    transform: scale(1.05);
+    transform: scale(1.08) translateY(-5px);
+    box-shadow: 0 8px 25px rgba(241, 104, 58, 0.6);
 }
 
 .thumbnail .item img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    border-radius: 20px;
+    transition: transform 0.3s ease;
+}
+
+.thumbnail .item:hover img {
+    transform: scale(1.1);
 }
 
 .thumbnail .item .content {
@@ -194,45 +209,62 @@ header nav {
     right: 10px;
     color: #fff;
     text-shadow: 0 2px 5px #000;
+    background: rgba(0, 0, 0, 0.6);
+    padding: 10px;
+    border-radius: 8px;
 }
 
 .thumbnail .item .content .title {
     font-weight: bold;
-    font-size: 14px;
+    font-size: 12px;
+    margin-bottom: 3px;
+}
+
+.thumbnail .item .content .des {
+    font-size: 10px;
+    opacity: 0.9;
 }
 
 /* arrow */
 .arrows {
     position: absolute;
-    top: 80%;
-    /* Di chuyển arrows sang phải vừa phải */
-    right: 8%;
+    /* Nâng arrows lên cao hơn - ngang với thumbnail */
+    top: calc(100vh - 350px);
+    right: 5%;
     left: auto;
     width: 300px;
     max-width: 30%;
     display: flex;
-    gap: 10px;
+    gap: 15px;
     align-items: center;
+    z-index: 101;
 }
 
 .arrows button {
-    width: 40px;
-    height: 40px;
+    width: 50px;
+    height: 50px;
     border-radius: 50%;
-    background-color: rgba(238, 238, 238, 0.4);
-    border: none;
+    /* Làm nổi bật nút carousel */
+    background: linear-gradient(135deg, #f1683a 0%, #d85534 100%);
+    border: 3px solid #fff;
     font-family: monospace;
     color: #fff;
     font-weight: bold;
-    font-size: large;
-    transition: .5s;
+    font-size: 20px;
+    transition: all 0.3s ease;
     z-index: 100;
     cursor: pointer;
+    box-shadow: 0 5px 15px rgba(241, 104, 58, 0.5);
 }
 
 .arrows button:hover {
-    background-color: #eee;
-    color: #555;
+    background: linear-gradient(135deg, #d85534 0%, #f1683a 100%);
+    transform: scale(1.15);
+    box-shadow: 0 8px 25px rgba(241, 104, 58, 0.7);
+}
+
+.arrows button:active {
+    transform: scale(1.05);
 }
 
 .carousel .list .item:nth-child(1) {
@@ -275,15 +307,23 @@ header nav {
     animation-delay: 1.8s;
 }
 
+/* Active thumbnail highlight */
+.thumbnail .item.active {
+    border: 3px solid #f1683a;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
-    .carousel .list .item .content .title,
-    .carousel .list .item .content .topic {
-        font-size: 2.5em;
+    .carousel .list .item .content {
+        width: 85%;
+        left: 50%;
+        transform: translateX(-50%);
+        padding: 20px;
     }
     
-    .carousel .list .item .content {
-        padding-right: 10%;
+    .carousel .list .item .content .title,
+    .carousel .list .item .content .topic {
+        font-size: 2em;
     }
     
     .thumbnail {
@@ -294,12 +334,19 @@ header nav {
     }
     
     .thumbnail .item {
-        width: 100px;
-        height: 150px;
+        width: 80px;
+        height: 120px;
     }
     
     .arrows {
-        top: 85%;
-        right: 10%;
+        top: calc(100vh - 200px);
+        right: 50%;
+        transform: translateX(50%);
+    }
+    
+    .arrows button {
+        width: 40px;
+        height: 40px;
+        font-size: 16px;
     }
 }
