@@ -558,10 +558,19 @@
         
         .template-preview {
             font-family: 'Cambria Math', 'Times New Roman', serif;
-            font-size: 18px;
+            font-size: 16px;
             text-align: center;
             margin-bottom: 6px;
             color: #1a1a1a;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 30px;
+        }
+
+        .template-preview mjx-container {
+            font-size: 14px !important;
         }
         
         .template-name {
@@ -956,35 +965,35 @@
                     </div>
                     <div class="math-templates" id="mathTemplates">
                         <div class="math-template" onclick="loadTemplate('quadratic')">
-                            <div class="template-preview">ax² + bx + c = 0</div>
+                            <div class="template-preview">$ax^2 + bx + c = 0$</div>
                             <div class="template-name">PT bậc 2 (có slider)</div>
                         </div>
                         <div class="math-template" onclick="loadTemplate('fraction')">
-                            <div class="template-preview">\frac{a}{b}</div>
+                            <div class="template-preview">$\frac{a}{b}$</div>
                             <div class="template-name">Phân số</div>
                         </div>
                         <div class="math-template" onclick="loadTemplate('derivative')">
-                            <div class="template-preview">f'(x)</div>
+                            <div class="template-preview">$f'(x) = \frac{df}{dx}$</div>
                             <div class="template-name">Đạo hàm</div>
                         </div>
                         <div class="math-template" onclick="loadTemplate('integral')">
-                            <div class="template-preview">∫ f(x) dx</div>
+                            <div class="template-preview">$\int_{a}^{b} f(x) dx$</div>
                             <div class="template-name">Tích phân (có slider)</div>
                         </div>
                         <div class="math-template" onclick="loadTemplate('limit')">
-                            <div class="template-preview">lim f(x)</div>
+                            <div class="template-preview">$\lim_{x \to a} f(x)$</div>
                             <div class="template-name">Giới hạn</div>
                         </div>
                         <div class="math-template" onclick="loadTemplate('system')">
-                            <div class="template-preview">Hệ phương trình</div>
+                            <div class="template-preview">$\begin{cases} ax+by=c \\ dx+ey=f \end{cases}$</div>
                             <div class="template-name">Hệ PT (có slider)</div>
                         </div>
                         <div class="math-template" onclick="loadTemplate('matrix2x2')">
-                            <div class="template-preview">Ma trận 2×2</div>
+                            <div class="template-preview">$\begin{bmatrix} a & b \\ c & d \end{bmatrix}$</div>
                             <div class="template-name">Ma trận</div>
                         </div>
                         <div class="math-template" onclick="loadTemplate('vector')">
-                            <div class="template-preview">Vectơ</div>
+                            <div class="template-preview">$\overrightarrow{v} = (x, y)$</div>
                             <div class="template-name">Vectơ (có slider)</div>
                         </div>
                     </div>
@@ -1021,6 +1030,13 @@
             document.getElementById('mathModal').style.display = 'flex';
             document.getElementById('mathModalOverlay').style.display = 'block';
             resetFormula();
+
+            // Render MathJax cho template previews
+            if (window.MathJax) {
+                const templates = document.getElementById('mathTemplates');
+                MathJax.typesetPromise([templates]).catch(console.error);
+            }
+
             // Focus vào ô nhập đầu tiên nếu có
             setTimeout(() => {
                 const firstInput = document.querySelector('.math-input');
@@ -1514,15 +1530,15 @@
         function updateDisplay() {
             const display = document.getElementById('mathDisplay');
             const latex = currentFormula.latex;
-            
+
             if (!latex) {
                 display.innerHTML = 'Công thức sẽ hiển thị tại đây';
                 return;
             }
-            
-            // Tạo công thức với MathJax
-            display.innerHTML = `\\(${latex}\\)`;
-            
+
+            // Tạo công thức với MathJax - sử dụng display math mode
+            display.innerHTML = `$$${latex}$$`;
+
             // Render MathJax
             if (window.MathJax) {
                 MathJax.typesetClear([display]);
@@ -1852,57 +1868,56 @@
         
         // Format tin nhắn từ AI
         function formatAIResponse(text) {
-    // Xử lý công thức display ($$...$$ hoặc \[...\])
     let formatted = text;
-    
+
     // Chuyển đổi \[...\] thành $$...$$ để nhất quán
     formatted = formatted.replace(/\\\[(.*?)\\\]/gs, function(match, formula) {
         return `$$${formula}$$`;
     });
-    
+
     // Chuyển đổi \(...\) thành $...$ để nhất quán
     formatted = formatted.replace(/\\\((.*?)\\\)/g, function(match, formula) {
         return `$${formula}$`;
     });
-    
-    // Đảm bảo mỗi công thức display đều có div riêng
-    formatted = formatted.replace(/\$\$(.*?)\$\$/gs, function(match, formula) {
-        // Loại bỏ khoảng trắng thừa
-        formula = formula.trim();
-        // Nếu có nhiều công thức trong cùng $$ $$, tách ra
-        if (formula.includes('$$')) {
-            // Đã có format đúng, giữ nguyên
-            return match;
-        }
-        return `<div class="math-display">$$${formula}$$</div>`;
+
+    // Lưu trữ các công thức display để tránh bị xử lý bởi inline regex
+    let displayMathBlocks = [];
+    formatted = formatted.replace(/\$\$([\s\S]*?)\$\$/g, function(match, formula) {
+        const index = displayMathBlocks.length;
+        displayMathBlocks.push(`<div class="math-display">$$${formula.trim()}$$</div>`);
+        return `%%DISPLAY_MATH_${index}%%`;
     });
-    
-    // Xử lý công thức inline
-    formatted = formatted.replace(/\$(.*?)\$/g, function(match, formula) {
-        // Kiểm tra nếu là công thức phức tạp (có \frac, \sqrt, v.v.) thì để nguyên
-        if (formula.includes('\\frac') || formula.includes('\\sqrt') || 
+
+    // Xử lý công thức inline (không ảnh hưởng đến display math đã được thay thế)
+    formatted = formatted.replace(/\$([^$]+?)\$/g, function(match, formula) {
+        // Kiểm tra nếu là công thức phức tạp (có \frac, \sqrt, v.v.) thì chuyển thành display
+        if (formula.includes('\\frac') || formula.includes('\\sqrt') ||
             formula.includes('\\int') || formula.includes('\\sum') ||
             formula.includes('\\lim') || formula.includes('\\begin')) {
-            // Các công thức phức tạp hiển thị như display
             return `<div class="math-display">$$${formula}$$</div>`;
         }
         return `<span class="math-inline">$${formula}$</span>`;
     });
-    
+
+    // Khôi phục các công thức display
+    displayMathBlocks.forEach((block, index) => {
+        formatted = formatted.replace(`%%DISPLAY_MATH_${index}%%`, block);
+    });
+
     // Đảm bảo mỗi dòng công thức đều được căn giữa đẹp
     formatted = formatted.replace(/(\n\s*?\n)/g, '</p><p>');
-    
+
     // Format markdown đơn giản
     formatted = formatted
         .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
         .replace(/\*(.*?)\*/g, '<em>$1</em>')
-        .replace(/^\s*[-•]\s*(.*?)(?=\n|$)/gm, '• $1<br>') // Danh sách bullet
+        .replace(/^\s*[-•]\s*(.*?)(?=\n|$)/gm, '• $1<br>')
         .replace(/\n\n/g, '</p><p>')
         .replace(/\n/g, '<br>');
-    
+
     // Thêm style để căn giữa công thức
     formatted = `<div class="math-solution">${formatted}</div>`;
-    
+
     return formatted;
 }
         // Thêm tin nhắn vào chat
