@@ -1,21 +1,31 @@
+
 <!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Chatbot</title>
+    <title>AI Chatbot Toán học - Trình soạn công thức trực quan với Thanh trượt</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- MathJax đơn giản -->
+    <!-- MathJax cho hiển thị công thức toán học đẹp -->
     <script>
-        MathJax = {
+        window.MathJax = {
             tex: {
-                inlineMath: [['$', '$'], ['\\(', '\\)']],
-                displayMath: [['$$', '$$'], ['\\[', '\\]']],
-                processEscapes: true
+                inlineMath: [['$', '$']],
+                displayMath: [['$$', '$$']],
+                processEscapes: true,
+                processEnvironments: true
+            },
+            options: {
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+                ignoreHtmlClass: 'tex2jax_ignore'
             },
             svg: {
-                fontCache: 'global'
+                fontCache: 'global',
+                scale: 1.1
+            },
+            startup: {
+                typeset: true
             }
         };
     </script>
@@ -152,50 +162,30 @@
             font-size: 16px;
             color: #374151;
             padding-top: 2px;
+            overflow-wrap: break-word;
         }
         
-        .message-content p {
-            margin-bottom: 16px;
+        /* Toán học trong chat */
+        .math-inline {
+            font-family: 'Cambria Math', 'Times New Roman', serif;
+            color: #1a1a1a;
         }
         
-        .message-content p:last-child {
-            margin-bottom: 0;
+        .math-display {
+            display: block;
+            text-align: center;
+            margin: 1.2em auto;
+            padding: 0.8em;
+            background: #f8fafc;
+            border-radius: 6px;
+            border: 1px solid #e5e7eb;
+            max-width: 95%;
         }
         
-        /* Toán học */
-        .message-content .MathJax {
-            margin: 16px 0 !important;
-        }
-        
-        .message-content mjx-container {
-            overflow-x: auto;
-            overflow-y: hidden;
-        }
-        
-        .message-content mjx-container[jax="SVG"][display="true"] {
-            margin: 24px 0 !important;
-        }
-        
-        /* Code */
-        .message-content pre {
-            background: #1f2937;
-            color: #f9fafb;
-            padding: 16px;
-            border-radius: 8px;
-            overflow-x: auto;
-            margin: 16px 0;
-            font-family: 'Consolas', monospace;
-            font-size: 14px;
-            border: 1px solid #374151;
-        }
-        
-        .message-content code:not(pre code) {
-            background: #e5e7eb;
-            color: #1f2937;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-family: 'Consolas', monospace;
-            font-size: 14px;
+        mjx-container[jax="SVG"][display="true"] {
+            display: block !important;
+            text-align: center !important;
+            margin: 1.2em auto !important;
         }
         
         /* Input area */
@@ -242,10 +232,6 @@
             line-height: 1.5;
         }
         
-        .input-box textarea::placeholder {
-            color: #9ca3af;
-        }
-        
         .send-button {
             background: #4f46e5;
             border: none;
@@ -263,103 +249,402 @@
         
         .send-button:hover:not(:disabled) {
             background: #4338ca;
-            transform: translateY(-1px);
         }
         
-        .send-button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            background: #9ca3af;
+        /* Math Editor Modal - GIỐNG MATHTYPE với thanh trượt */
+        .math-editor-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 800px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            display: none;
+            flex-direction: column;
+            max-height: 90vh;
+            overflow: hidden;
         }
         
-        /* Footer */
-        .footer {
-            text-align: center;
-            padding: 12px;
-            font-size: 12px;
-            color: #6b7280;
-            background: #ffffff;
-            border-top: 1px solid #e5e5e7;
+        .math-modal-header {
+            padding: 16px 24px;
+            background: #4f46e5;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
         }
         
-        /* Loading animation */
-        .typing-indicator {
+        .math-modal-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        .math-modal-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            width: 32px;
+            height: 32px;
             display: flex;
             align-items: center;
-            gap: 8px;
-            padding: 8px 0;
-        }
-        
-        .typing-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: #10b981;
-            opacity: 0.6;
-            animation: typing 1.4s infinite ease-in-out;
-        }
-        
-        .typing-dot:nth-child(2) {
-            animation-delay: 0.2s;
-        }
-        
-        .typing-dot:nth-child(3) {
-            animation-delay: 0.4s;
-        }
-        
-        @keyframes typing {
-            0%, 60%, 100% {
-                transform: translateY(0);
-                opacity: 0.6;
-            }
-            30% {
-                transform: translateY(-10px);
-                opacity: 1;
-            }
-        }
-        
-        /* Scrollbar */
-        .chat-container::-webkit-scrollbar {
-            width: 8px;
-        }
-        
-        .chat-container::-webkit-scrollbar-track {
-            background: #f9fafb;
-        }
-        
-        .chat-container::-webkit-scrollbar-thumb {
-            background: #d1d5db;
+            justify-content: center;
             border-radius: 4px;
         }
         
-        .chat-container::-webkit-scrollbar-thumb:hover {
-            background: #9ca3af;
+        .math-modal-body {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
         }
         
-        /* Responsive */
-        @media (max-width: 768px) {
-            .message-container {
-                padding: 0 12px;
-                gap: 16px;
-            }
-            
-            .avatar {
-                width: 28px;
-                height: 28px;
-                font-size: 14px;
-            }
-            
-            .message-content {
-                font-size: 15px;
-            }
-            
-            .header {
-                padding: 0 16px;
-            }
-            
-            .title {
-                font-size: 16px;
-            }
+        /* Math Toolbar */
+        .math-toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2px;
+            padding: 10px;
+            background: #f8fafc;
+            border-bottom: 1px solid #e5e7eb;
+            flex-shrink: 0;
+        }
+        
+        .math-toolbar-section {
+            display: flex;
+            gap: 2px;
+            padding: 0 8px;
+            border-right: 1px solid #d1d5db;
+        }
+        
+        .math-toolbar-section:last-child {
+            border-right: none;
+        }
+        
+        .math-tool {
+            width: 42px;
+            height: 42px;
+            border-radius: 4px;
+            border: 1px solid #d1d5db;
+            background: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Cambria Math', 'Times New Roman', serif;
+            font-size: 16px;
+            transition: all 0.2s;
+        }
+        
+        .math-tool:hover {
+            background: #eef2ff;
+            border-color: #4f46e5;
+        }
+        
+        /* Math Editor - GIAO DIỆN TRỰC QUAN */
+        .math-editor-main {
+            flex: 1;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            background: #fafafa;
+            min-height: 0;
+        }
+        
+        .math-editor-display {
+            min-height: 100px;
+            max-height: 150px;
+            border: 2px solid #4f46e5;
+            border-radius: 8px;
+            background: white;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Cambria Math', 'Times New Roman', serif;
+            font-size: 24px;
+            overflow-x: auto;
+            flex-shrink: 0;
+        }
+        
+        /* VÙNG NHẬP LIỆU với thanh trượt */
+        .math-input-fields {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            border: 1px solid #e5e7eb;
+            overflow-y: auto;
+            max-height: 300px;
+            min-height: 100px;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        .input-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            color: #374151;
+            font-weight: 500;
+        }
+        
+        .input-label span {
+            font-weight: normal;
+            color: #6b7280;
+            font-size: 14px;
+        }
+        
+        .math-input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 16px;
+            font-family: 'Cambria Math', 'Times New Roman', serif;
+            margin-bottom: 8px;
+        }
+        
+        .math-input:focus {
+            outline: none;
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+        
+        /* THANH TRƯỢT */
+        .slider-container {
+            margin-top: 10px;
+            padding: 0 5px;
+        }
+        
+        .slider-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .slider-value {
+            min-width: 30px;
+            text-align: center;
+            font-weight: bold;
+            color: #4f46e5;
+        }
+        
+        .slider {
+            flex: 1;
+            height: 6px;
+            -webkit-appearance: none;
+            appearance: none;
+            background: #e5e7eb;
+            border-radius: 3px;
+            outline: none;
+        }
+        
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #4f46e5;
+            cursor: pointer;
+            border: 2px solid white;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            transition: all 0.2s;
+        }
+        
+        .slider::-webkit-slider-thumb:hover {
+            background: #4338ca;
+            transform: scale(1.1);
+        }
+        
+        .slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #4f46e5;
+            cursor: pointer;
+            border: 2px solid white;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* Thanh trượt theo loại giá trị */
+        .slider.integer {
+            background: linear-gradient(to right, #e0e7ff, #4f46e5);
+        }
+        
+        .slider.decimal {
+            background: linear-gradient(to right, #dbeafe, #3b82f6);
+        }
+        
+        .slider.angle {
+            background: linear-gradient(to right, #fef3c7, #f59e0b);
+        }
+        
+        /* Các nút điều chỉnh nhanh */
+        .quick-adjust {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 8px;
+        }
+        
+        .adjust-btn {
+            padding: 4px 12px;
+            border: 1px solid #d1d5db;
+            background: white;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+        
+        .adjust-btn:hover {
+            background: #f3f4f6;
+            border-color: #9ca3af;
+        }
+        
+        .adjust-btn.primary {
+            background: #4f46e5;
+            color: white;
+            border-color: #4f46e5;
+        }
+        
+        .adjust-btn.primary:hover {
+            background: #4338ca;
+        }
+        
+        /* MẪU CÔNG THỨC */
+        .math-templates-container {
+            margin-top: 10px;
+            flex-shrink: 0;
+        }
+        
+        .math-templates {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 10px;
+            max-height: 150px;
+            overflow-y: auto;
+            padding: 10px;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+        }
+        
+        .math-template {
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: white;
+            min-height: 70px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .math-template:hover {
+            border-color: #4f46e5;
+            background: #f5f3ff;
+        }
+        
+        .template-preview {
+            font-family: 'Cambria Math', 'Times New Roman', serif;
+            font-size: 16px;
+            text-align: center;
+            margin-bottom: 6px;
+            color: #1a1a1a;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 30px;
+        }
+
+        .template-preview mjx-container {
+            font-size: 14px !important;
+        }
+        
+        .template-name {
+            font-size: 12px;
+            color: #6b7280;
+            text-align: center;
+        }
+        
+        .math-modal-footer {
+            padding: 16px 24px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            border-top: 1px solid #e5e7eb;
+            background: white;
+            flex-shrink: 0;
+        }
+        
+        .math-btn {
+            padding: 10px 24px;
+            border-radius: 6px;
+            border: none;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 14px;
+        }
+        
+        .math-btn-primary {
+            background: #4f46e5;
+            color: white;
+        }
+        
+        .math-btn-primary:hover {
+            background: #4338ca;
+        }
+        
+        /* Overlay */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            display: none;
+        }
+        
+        /* Formula Quick Buttons */
+        .formula-quick-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 12px 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .formula-btn {
+            padding: 8px 16px;
+            border-radius: 6px;
+            border: 1px solid #d1d5db;
+            background: white;
+            cursor: pointer;
+            font-family: 'Cambria Math', 'Times New Roman', serif;
+            font-size: 15px;
+            transition: all 0.2s;
+        }
+        
+        .formula-btn:hover {
+            background: #eef2ff;
+            border-color: #4f46e5;
+            color: #4f46e5;
         }
         
         /* Welcome screen */
@@ -391,33 +676,89 @@
         }
         
         .start-hint {
-            background: #f3f4f6;
+            background: #f8fafc;
+            padding: 20px;
             border-radius: 12px;
-            padding: 24px;
-            margin-top: 40px;
-            border-left: 4px solid #4f46e5;
+            max-width: 600px;
+            margin: 0 auto;
             text-align: left;
+            border: 1px solid #e5e7eb;
         }
         
         .start-hint h3 {
-            color: #1a1a1a;
-            margin-bottom: 12px;
-            font-size: 18px;
+            color: #4f46e5;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
         
         .start-hint p {
+            margin-bottom: 10px;
             color: #6b7280;
-            margin-bottom: 8px;
-            font-size: 15px;
         }
         
-        /* Scrollbar styling */
+        /* Loading animation */
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 0;
+        }
+        
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #10b981;
+            opacity: 0.6;
+            animation: typing 1.4s infinite ease-in-out;
+        }
+        
+        @keyframes typing {
+            0%, 60%, 100% { transform: translateY(0); opacity: 0.6; }
+            30% { transform: translateY(-10px); opacity: 1; }
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .math-editor-modal {
+                width: 95%;
+                height: 95vh;
+                max-height: 95vh;
+            }
+            
+            .math-editor-display {
+                font-size: 18px;
+                padding: 15px;
+                max-height: 120px;
+            }
+            
+            .math-tool {
+                width: 36px;
+                height: 36px;
+                font-size: 14px;
+            }
+            
+            .math-templates {
+                grid-template-columns: repeat(2, 1fr);
+                max-height: 120px;
+            }
+            
+            .math-input-fields {
+                max-height: 200px;
+            }
+        }
+        
+        /* Scrollbar */
         ::-webkit-scrollbar {
             width: 8px;
+            height: 8px;
         }
         
         ::-webkit-scrollbar-track {
             background: #f1f1f1;
+            border-radius: 4px;
         }
         
         ::-webkit-scrollbar-thumb {
@@ -428,16 +769,45 @@
         ::-webkit-scrollbar-thumb:hover {
             background: #a1a1a1;
         }
-        
-        /* Math examples in chat */
-        .math-example {
-            background: #f8fafc;
-            border-radius: 8px;
-            padding: 12px 16px;
-            margin: 8px 0;
-            border-left: 3px solid #4f46e5;
-            font-size: 15px;
-        }
+        /* Container cho lời giải toán */
+.math-solution {
+    line-height: 1.8;
+}
+
+.math-solution p {
+    margin-bottom: 1em;
+}
+
+/* Đảm bảo công thức display luôn căn giữa và có khoảng cách */
+.math-display {
+    display: block;
+    text-align: center;
+    margin: 1.5em auto;
+    padding: 1em;
+    background: #f8fafc;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+    max-width: 95%;
+    overflow-x: auto;
+}
+
+/* Khi có nhiều công thức liên tiếp */
+.math-display + .math-display {
+    margin-top: 0.5em;
+}
+
+/* Định dạng cho từng bước giải */
+.solution-step {
+    margin-bottom: 1.5em;
+    padding-left: 1em;
+    border-left: 3px solid #4f46e5;
+}
+
+.step-title {
+    font-weight: 600;
+    color: #4f46e5;
+    margin-bottom: 0.5em;
+}
     </style>
 </head>
 <body>
@@ -447,40 +817,39 @@
             <div class="logo">
                 <i class="fas fa-calculator"></i>
             </div>
-            <div class="title">AI Chatbot</div>
+            <div class="title">AI Chatbot Toán học - Soạn công thức trực quan với Thanh trượt</div>
         </div>
         <div class="header-right">
-            <button class="icon-btn" title="Tìm kiếm" id="searchBtn">
-                <i class="fas fa-search"></i>
+            <button class="icon-btn" title="Soạn công thức toán" id="mathBtn">
+                <i class="fas fa-square-root-alt"></i>
             </button>
             <button class="icon-btn" title="Xóa cuộc trò chuyện" id="clearBtn">
                 <i class="fas fa-trash-alt"></i>
             </button>
-            <button class="icon-btn" title="Trợ giúp" id="helpBtn">
-                <i class="fas fa-question-circle"></i>
+            <button class="icon-btn" title="Ví dụ" id="exampleBtn">
+                <i class="fas fa-lightbulb"></i>
             </button>
         </div>
     </div>
     
     <!-- Chat container -->
     <div class="chat-container" id="chatContainer">
-        <!-- Welcome screen - chỉ hiện khi chưa có tin nhắn -->
         <div class="welcome-screen" id="welcomeScreen">
             <div class="welcome-icon">
                 <i class="fas fa-robot"></i>
             </div>
-            <div class="welcome-title">Siêu trợ lý Toán học AI Chatbot</div>
+            <div class="welcome-title">Trợ lý Toán học AI với Thanh trượt trực quan</div>
             <div class="welcome-subtitle">
-                Tôi có thể giúp bạn giải các bài toán, từ đại số cơ bản đến giải tích nâng cao.<br>
-                Hãy hỏi tôi bất kỳ câu hỏi toán học nào và tôi sẽ giải thích từng bước chi tiết.
+                Soạn công thức toán học với thanh trượt điều chỉnh giá trị<br>
+                Nhập bài toán và nhận lời giải chi tiết với công thức đẹp
             </div>
             
             <div class="start-hint">
-                <h3>Bắt đầu ngay</h3>
-                <p>• Nhập câu hỏi toán học của bạn vào ô bên dưới</p>
-                <p>• Sử dụng ký hiệu toán học như $x^2$, $\int$, $\frac{a}{b}$</p>
-                <p>• Nhấn Enter để gửi câu hỏi</p>
-                <p>• Tôi sẽ giải thích từng bước chi tiết</p>
+                <h3><i class="fas fa-sliders-h"></i> Tính năng thanh trượt mới!</h3>
+                <p>• <strong>Kéo thanh trượt</strong> để điều chỉnh giá trị trực quan</p>
+                <p>• <strong>Nhấn nút +/-</strong> để điều chỉnh nhanh giá trị</p>
+                <p>• <strong>Xem giá trị thay đổi</strong> ngay lập tức trong công thức</p>
+                <p>• <strong>Thanh trượt màu sắc</strong> khác nhau cho từng loại giá trị</p>
             </div>
         </div>
     </div>
@@ -488,10 +857,32 @@
     <!-- Input area -->
     <div class="input-container">
         <div class="input-wrapper">
+            <!-- Quick Formula Buttons -->
+            <div class="formula-quick-buttons">
+                <button class="formula-btn" onclick="openMathTemplate('quadratic')">
+                    ax² + bx + c = 0
+                </button>
+                <button class="formula-btn" onclick="openMathTemplate('fraction')">
+                    a/b
+                </button>
+                <button class="formula-btn" onclick="openMathTemplate('integral')">
+                    ∫ f(x) dx
+                </button>
+                <button class="formula-btn" onclick="openMathTemplate('limit')">
+                    lim f(x)
+                </button>
+                <button class="formula-btn" onclick="openMathTemplate('system')">
+                    Hệ phương trình
+                </button>
+                <button class="formula-btn" onclick="openMathEditor()">
+                    <i class="fas fa-sliders-h"></i> Mở trình soạn
+                </button>
+            </div>
+            
             <div class="input-box">
                 <textarea 
                     id="userInput" 
-                    placeholder="Nhập câu hỏi mà bạn cần tôi giải" 
+                    placeholder="Nhập câu hỏi toán học của bạn..." 
                     rows="1"
                 ></textarea>
                 <button class="send-button" id="sendButton" onclick="sendMessage()">
@@ -503,10 +894,970 @@
     
     <!-- Footer -->
     <div class="footer">
-        <div>AI Chatbot - Website hỗ trợ học tốt môn Toán</div>
+        <div>AI Chatbot Toán học với Thanh trượt trực quan | Không cần biết LaTeX</div>
+    </div>
+
+    <!-- Math Editor Modal với thanh trượt -->
+    <div class="modal-overlay" id="mathModalOverlay" onclick="closeMathEditor()"></div>
+    <div class="math-editor-modal" id="mathModal">
+        <div class="math-modal-header">
+            <div class="math-modal-title">Trình soạn công thức toán học với Thanh trượt</div>
+            <button class="math-modal-close" onclick="closeMathEditor()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <div class="math-modal-body">
+            <!-- Thanh công cụ -->
+            <div class="math-toolbar">
+                <div class="math-toolbar-section">
+                    <button class="math-tool" onclick="addSymbol('x')" title="Biến x">x</button>
+                    <button class="math-tool" onclick="addSymbol('y')" title="Biến y">y</button>
+                    <button class="math-tool" onclick="addSymbol('a')" title="Biến a">a</button>
+                    <button class="math-tool" onclick="addSymbol('b')" title="Biến b">b</button>
+                    <button class="math-tool" onclick="addSymbol('c')" title="Biến c">c</button>
+                </div>
+                
+                <div class="math-toolbar-section">
+                    <button class="math-tool" onclick="addSymbol('+')" title="Cộng">+</button>
+                    <button class="math-tool" onclick="addSymbol('-')" title="Trừ">-</button>
+                    <button class="math-tool" onclick="addSymbol('×')" title="Nhân">×</button>
+                    <button class="math-tool" onclick="addSymbol('÷')" title="Chia">÷</button>
+                    <button class="math-tool" onclick="addSymbol('=')" title="Bằng">=</button>
+                </div>
+                
+                <div class="math-toolbar-section">
+                    <button class="math-tool" onclick="addSuperscript()" title="Mũ">x²</button>
+                    <button class="math-tool" onclick="addSubscript()" title="Chỉ số">x₁</button>
+                    <button class="math-tool" onclick="addFraction()" title="Phân số">a/b</button>
+                    <button class="math-tool" onclick="addSquareRoot()" title="Căn bậc 2">√</button>
+                    <button class="math-tool" onclick="addRoot()" title="Căn bậc n">ⁿ√</button>
+                </div>
+                
+                <div class="math-toolbar-section">
+                    <button class="math-tool" onclick="addSymbol('π')" title="Pi">π</button>
+                    <button class="math-tool" onclick="addSymbol('α')" title="Alpha">α</button>
+                    <button class="math-tool" onclick="addSymbol('β')" title="Beta">β</button>
+                    <button class="math-tool" onclick="addSymbol('θ')" title="Theta">θ</button>
+                </div>
+            </div>
+            
+            <!-- Nội dung chính của editor -->
+            <div class="math-editor-main">
+                <!-- Hiển thị công thức -->
+                <div class="math-editor-display" id="mathDisplay">
+                    Công thức sẽ hiển thị tại đây
+                </div>
+                
+                <!-- VÙNG NHẬP LIỆU với thanh trượt -->
+                <div class="math-input-fields" id="mathInputFields">
+                    <div id="currentInputs">
+                        <!-- Các ô nhập và thanh trượt sẽ được thêm động ở đây -->
+                    </div>
+                    <div class="instruction" style="text-align: center; color: #6b7280; font-size: 12px; margin-top: 10px;">
+                        <i class="fas fa-sliders-h"></i> Sử dụng thanh trượt hoặc nút +/- để điều chỉnh giá trị
+                    </div>
+                </div>
+                
+                <!-- Mẫu công thức có sẵn -->
+                <div class="math-templates-container">
+                    <div style="font-size: 14px; color: #374151; margin-bottom: 8px; font-weight: 500;">
+                        Mẫu công thức có thanh trượt:
+                    </div>
+                    <div class="math-templates" id="mathTemplates">
+                        <div class="math-template" onclick="loadTemplate('quadratic')">
+                            <div class="template-preview">$ax^2 + bx + c = 0$</div>
+                            <div class="template-name">PT bậc 2 (có slider)</div>
+                        </div>
+                        <div class="math-template" onclick="loadTemplate('fraction')">
+                            <div class="template-preview">$\frac{a}{b}$</div>
+                            <div class="template-name">Phân số</div>
+                        </div>
+                        <div class="math-template" onclick="loadTemplate('derivative')">
+                            <div class="template-preview">$f'(x) = \frac{df}{dx}$</div>
+                            <div class="template-name">Đạo hàm</div>
+                        </div>
+                        <div class="math-template" onclick="loadTemplate('integral')">
+                            <div class="template-preview">$\int_{a}^{b} f(x) dx$</div>
+                            <div class="template-name">Tích phân (có slider)</div>
+                        </div>
+                        <div class="math-template" onclick="loadTemplate('limit')">
+                            <div class="template-preview">$\lim_{x \to a} f(x)$</div>
+                            <div class="template-name">Giới hạn</div>
+                        </div>
+                        <div class="math-template" onclick="loadTemplate('system')">
+                            <div class="template-preview">$\begin{cases} ax+by=c \\ dx+ey=f \end{cases}$</div>
+                            <div class="template-name">Hệ PT (có slider)</div>
+                        </div>
+                        <div class="math-template" onclick="loadTemplate('matrix2x2')">
+                            <div class="template-preview">$\begin{bmatrix} a & b \\ c & d \end{bmatrix}$</div>
+                            <div class="template-name">Ma trận</div>
+                        </div>
+                        <div class="math-template" onclick="loadTemplate('vector')">
+                            <div class="template-preview">$\overrightarrow{v} = (x, y)$</div>
+                            <div class="template-name">Vectơ (có slider)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="math-modal-footer">
+            <button class="math-btn" onclick="clearMathEditor()">
+                <i class="fas fa-trash"></i> Xóa
+            </button>
+            <button class="math-btn" onclick="closeMathEditor()">
+                <i class="fas fa-times"></i> Hủy
+            </button>
+            <button class="math-btn math-btn-primary" onclick="insertFormulaToInput()">
+                <i class="fas fa-check"></i> Chèn vào câu hỏi
+            </button>
+        </div>
     </div>
 
     <script>
+        // =============================================
+        // TRÌNH SOẠN CÔNG THỨC TOÁN HỌC VỚI THANH TRƯỢT
+        // =============================================
+        
+        let currentFormula = {
+            type: '',
+            latex: '',
+            inputs: []
+        };
+        
+        // Mở trình soạn thảo
+        function openMathEditor() {
+            document.getElementById('mathModal').style.display = 'flex';
+            document.getElementById('mathModalOverlay').style.display = 'block';
+            resetFormula();
+
+            // Render MathJax cho template previews
+            if (window.MathJax) {
+                const templates = document.getElementById('mathTemplates');
+                MathJax.typesetPromise([templates]).catch(console.error);
+            }
+
+            // Focus vào ô nhập đầu tiên nếu có
+            setTimeout(() => {
+                const firstInput = document.querySelector('.math-input');
+                if (firstInput) firstInput.focus();
+            }, 100);
+        }
+        
+        // Đóng trình soạn thảo
+        function closeMathEditor() {
+            document.getElementById('mathModal').style.display = 'none';
+            document.getElementById('mathModalOverlay').style.display = 'none';
+            resetFormula();
+        }
+        
+        // Mở với template cụ thể
+        function openMathTemplate(templateType) {
+            openMathEditor();
+            setTimeout(() => {
+                loadTemplate(templateType);
+            }, 100);
+        }
+        
+        // Reset công thức
+        function resetFormula() {
+            currentFormula = {
+                type: '',
+                latex: '',
+                inputs: []
+            };
+            updateDisplay();
+            updateInputFields();
+        }
+        
+        // Thêm ký hiệu
+        function addSymbol(symbol) {
+            if (!currentFormula.type) {
+                currentFormula.type = 'expression';
+                currentFormula.latex = symbol;
+            } else {
+                currentFormula.latex += symbol;
+            }
+            updateDisplay();
+        }
+        
+        // Thêm mũ
+        function addSuperscript() {
+            currentFormula.type = 'superscript';
+            currentFormula.latex = 'x^{2}';
+            currentFormula.inputs = [
+                { 
+                    id: 'base', 
+                    label: 'Cơ số:', 
+                    value: 'x',
+                    slider: false
+                },
+                { 
+                    id: 'exponent', 
+                    label: 'Số mũ:', 
+                    value: '2',
+                    slider: true,
+                    min: -5,
+                    max: 5,
+                    step: 1,
+                    sliderType: 'integer'
+                }
+            ];
+            updateDisplay();
+            updateInputFields();
+            setTimeout(() => {
+                const firstInput = document.querySelector('.math-input');
+                if (firstInput) firstInput.focus();
+            }, 50);
+        }
+        
+        // Thêm chỉ số
+        function addSubscript() {
+            currentFormula.type = 'subscript';
+            currentFormula.latex = 'x_{1}';
+            currentFormula.inputs = [
+                { 
+                    id: 'base', 
+                    label: 'Cơ số:', 
+                    value: 'x',
+                    slider: false
+                },
+                { 
+                    id: 'subscript', 
+                    label: 'Chỉ số:', 
+                    value: '1',
+                    slider: true,
+                    min: 0,
+                    max: 10,
+                    step: 1,
+                    sliderType: 'integer'
+                }
+            ];
+            updateDisplay();
+            updateInputFields();
+            setTimeout(() => {
+                const firstInput = document.querySelector('.math-input');
+                if (firstInput) firstInput.focus();
+            }, 50);
+        }
+        
+        // Thêm phân số
+        function addFraction() {
+            currentFormula.type = 'fraction';
+            currentFormula.latex = '\\frac{a}{b}';
+            currentFormula.inputs = [
+                { 
+                    id: 'numerator', 
+                    label: 'Tử số:', 
+                    value: 'a',
+                    slider: true,
+                    min: -10,
+                    max: 10,
+                    step: 1,
+                    sliderType: 'integer'
+                },
+                { 
+                    id: 'denominator', 
+                    label: 'Mẫu số:', 
+                    value: 'b',
+                    slider: true,
+                    min: 1,
+                    max: 10,
+                    step: 1,
+                    sliderType: 'integer'
+                }
+            ];
+            updateDisplay();
+            updateInputFields();
+            setTimeout(() => {
+                const firstInput = document.querySelector('.math-input');
+                if (firstInput) firstInput.focus();
+            }, 50);
+        }
+        
+        // Thêm căn bậc 2
+        function addSquareRoot() {
+            currentFormula.type = 'sqrt';
+            currentFormula.latex = '\\sqrt{x}';
+            currentFormula.inputs = [
+                { 
+                    id: 'radicand', 
+                    label: 'Biểu thức trong căn:', 
+                    value: 'x',
+                    slider: true,
+                    min: 0,
+                    max: 100,
+                    step: 1,
+                    sliderType: 'integer'
+                }
+            ];
+            updateDisplay();
+            updateInputFields();
+            setTimeout(() => {
+                const firstInput = document.querySelector('.math-input');
+                if (firstInput) firstInput.focus();
+            }, 50);
+        }
+        
+        // Thêm căn bậc n
+        function addRoot() {
+            currentFormula.type = 'nthroot';
+            currentFormula.latex = '\\sqrt[n]{x}';
+            currentFormula.inputs = [
+                { 
+                    id: 'degree', 
+                    label: 'Bậc căn:', 
+                    value: 'n',
+                    slider: true,
+                    min: 2,
+                    max: 10,
+                    step: 1,
+                    sliderType: 'integer'
+                },
+                { 
+                    id: 'radicand', 
+                    label: 'Biểu thức trong căn:', 
+                    value: 'x',
+                    slider: true,
+                    min: 0,
+                    max: 100,
+                    step: 1,
+                    sliderType: 'integer'
+                }
+            ];
+            updateDisplay();
+            updateInputFields();
+            setTimeout(() => {
+                const firstInput = document.querySelector('.math-input');
+                if (firstInput) firstInput.focus();
+            }, 50);
+        }
+        
+        // Tải template
+        function loadTemplate(templateType) {
+            resetFormula();
+            
+            switch(templateType) {
+                case 'quadratic':
+                    currentFormula.type = 'quadratic';
+                    currentFormula.latex = 'ax^{2} + bx + c = 0';
+                    currentFormula.inputs = [
+                        { 
+                            id: 'a', 
+                            label: 'Hệ số a:', 
+                            value: '1',
+                            slider: true,
+                            min: -5,
+                            max: 5,
+                            step: 0.5,
+                            sliderType: 'decimal'
+                        },
+                        { 
+                            id: 'b', 
+                            label: 'Hệ số b:', 
+                            value: '3',
+                            slider: true,
+                            min: -10,
+                            max: 10,
+                            step: 1,
+                            sliderType: 'integer'
+                        },
+                        { 
+                            id: 'c', 
+                            label: 'Hệ số c:', 
+                            value: '2',
+                            slider: true,
+                            min: -10,
+                            max: 10,
+                            step: 1,
+                            sliderType: 'integer'
+                        }
+                    ];
+                    break;
+                    
+                case 'fraction':
+                    addFraction();
+                    break;
+                    
+                case 'derivative':
+                    currentFormula.type = 'derivative';
+                    currentFormula.latex = "f'(x) = \\frac{df}{dx}";
+                    currentFormula.inputs = [
+                        { 
+                            id: 'function', 
+                            label: 'Hàm số f(x):', 
+                            value: 'x^2',
+                            slider: false
+                        },
+                        { 
+                            id: 'variable', 
+                            label: 'Biến lấy đạo hàm:', 
+                            value: 'x',
+                            slider: false
+                        }
+                    ];
+                    break;
+                    
+                case 'integral':
+                    currentFormula.type = 'integral';
+                    currentFormula.latex = '\\int_{a}^{b} f(x) dx';
+                    currentFormula.inputs = [
+                        { 
+                            id: 'lower', 
+                            label: 'Cận dưới:', 
+                            value: '0',
+                            slider: true,
+                            min: -5,
+                            max: 0,
+                            step: 1,
+                            sliderType: 'integer'
+                        },
+                        { 
+                            id: 'upper', 
+                            label: 'Cận trên:', 
+                            value: '5',
+                            slider: true,
+                            min: 1,
+                            max: 10,
+                            step: 1,
+                            sliderType: 'integer'
+                        },
+                        { 
+                            id: 'function', 
+                            label: 'Hàm số f(x):', 
+                            value: 'x',
+                            slider: false
+                        },
+                        { 
+                            id: 'variable', 
+                            label: 'Biến tích phân:', 
+                            value: 'x',
+                            slider: false
+                        }
+                    ];
+                    break;
+                    
+                case 'limit':
+                    currentFormula.type = 'limit';
+                    currentFormula.latex = '\\lim_{x \\to a} f(x)';
+                    currentFormula.inputs = [
+                        { 
+                            id: 'variable', 
+                            label: 'Biến:', 
+                            value: 'x',
+                            slider: false
+                        },
+                        { 
+                            id: 'approach', 
+                            label: 'Tiến đến:', 
+                            value: '0',
+                            slider: true,
+                            min: -5,
+                            max: 5,
+                            step: 1,
+                            sliderType: 'integer'
+                        },
+                        { 
+                            id: 'function', 
+                            label: 'Hàm số f(x):', 
+                            value: 'sin(x)',
+                            slider: false
+                        }
+                    ];
+                    break;
+                    
+                case 'system':
+                    currentFormula.type = 'system';
+                    currentFormula.latex = '\\begin{cases} ax + by = c \\\\ dx + ey = f \\end{cases}';
+                    currentFormula.inputs = [
+                        { 
+                            id: 'a1', 
+                            label: 'Hệ số a (PT1):', 
+                            value: '2',
+                            slider: true,
+                            min: -5,
+                            max: 5,
+                            step: 1,
+                            sliderType: 'integer'
+                        },
+                        { 
+                            id: 'b1', 
+                            label: 'Hệ số b (PT1):', 
+                            value: '1',
+                            slider: true,
+                            min: -5,
+                            max: 5,
+                            step: 1,
+                            sliderType: 'integer'
+                        },
+                        { 
+                            id: 'c1', 
+                            label: 'Hằng số c (PT1):', 
+                            value: '5',
+                            slider: true,
+                            min: -10,
+                            max: 10,
+                            step: 1,
+                            sliderType: 'integer'
+                        },
+                        { 
+                            id: 'a2', 
+                            label: 'Hệ số d (PT2):', 
+                            value: '1',
+                            slider: true,
+                            min: -5,
+                            max: 5,
+                            step: 1,
+                            sliderType: 'integer'
+                        },
+                        { 
+                            id: 'b2', 
+                            label: 'Hệ số e (PT2):', 
+                            value: '-1',
+                            slider: true,
+                            min: -5,
+                            max: 5,
+                            step: 1,
+                            sliderType: 'integer'
+                        },
+                        { 
+                            id: 'c2', 
+                            label: 'Hằng số f (PT2):', 
+                            value: '1',
+                            slider: true,
+                            min: -10,
+                            max: 10,
+                            step: 1,
+                            sliderType: 'integer'
+                        }
+                    ];
+                    break;
+                    
+                case 'matrix2x2':
+                    currentFormula.type = 'matrix';
+                    currentFormula.latex = '\\begin{bmatrix} a & b \\\\ c & d \\end{bmatrix}';
+                    currentFormula.inputs = [
+                        { 
+                            id: 'a', 
+                            label: 'Phần tử a₁₁:', 
+                            value: '1',
+                            slider: true,
+                            min: -5,
+                            max: 5,
+                            step: 1,
+                            sliderType: 'integer'
+                        },
+                        { 
+                            id: 'b', 
+                            label: 'Phần tử a₁₂:', 
+                            value: '2',
+                            slider: true,
+                            min: -5,
+                            max: 5,
+                            step: 1,
+                            sliderType: 'integer'
+                        },
+                        { 
+                            id: 'c', 
+                            label: 'Phần tử a₂₁:', 
+                            value: '3',
+                            slider: true,
+                            min: -5,
+                            max: 5,
+                            step: 1,
+                            sliderType: 'integer'
+                        },
+                        { 
+                            id: 'd', 
+                            label: 'Phần tử a₂₂:', 
+                            value: '4',
+                            slider: true,
+                            min: -5,
+                            max: 5,
+                            step: 1,
+                            sliderType: 'integer'
+                        }
+                    ];
+                    break;
+                    
+                case 'vector':
+                    currentFormula.type = 'vector';
+                    currentFormula.latex = '\\overrightarrow{v} = (x, y)';
+                    currentFormula.inputs = [
+                        { 
+                            id: 'name', 
+                            label: 'Tên vectơ:', 
+                            value: 'v',
+                            slider: false
+                        },
+                        { 
+                            id: 'x', 
+                            label: 'Thành phần x:', 
+                            value: '3',
+                            slider: true,
+                            min: -10,
+                            max: 10,
+                            step: 1,
+                            sliderType: 'integer'
+                        },
+                        { 
+                            id: 'y', 
+                            label: 'Thành phần y:', 
+                            value: '4',
+                            slider: true,
+                            min: -10,
+                            max: 10,
+                            step: 1,
+                            sliderType: 'integer'
+                        }
+                    ];
+                    break;
+            }
+            
+            updateDisplay();
+            updateInputFields();
+            
+            // Focus vào ô đầu tiên
+            setTimeout(() => {
+                const firstInput = document.querySelector('.math-input');
+                if (firstInput) {
+                    firstInput.focus();
+                }
+            }, 100);
+        }
+        
+        // Cập nhật hiển thị
+        function updateDisplay() {
+            const display = document.getElementById('mathDisplay');
+            const latex = currentFormula.latex;
+
+            if (!latex) {
+                display.innerHTML = 'Công thức sẽ hiển thị tại đây';
+                return;
+            }
+
+            // Tạo công thức với MathJax - sử dụng display math mode
+            display.innerHTML = `$$${latex}$$`;
+
+            // Render MathJax
+            if (window.MathJax) {
+                MathJax.typesetClear([display]);
+                MathJax.typesetPromise([display]).catch(console.error);
+            }
+        }
+        
+        // Cập nhật các ô nhập liệu và thanh trượt
+        function updateInputFields() {
+            const container = document.getElementById('currentInputs');
+            container.innerHTML = '';
+            
+            if (!currentFormula.inputs || currentFormula.inputs.length === 0) {
+                container.innerHTML = '<div style="color: #6b7280; text-align: center; padding: 20px;">Chọn một công thức từ thanh công cụ hoặc mẫu có sẵn</div>';
+                return;
+            }
+            
+            currentFormula.inputs.forEach((input, index) => {
+                const div = document.createElement('div');
+                div.className = 'input-group';
+                
+                let sliderHTML = '';
+                let quickAdjustHTML = '';
+                
+                if (input.slider) {
+                    const numericValue = isNaN(parseFloat(input.value)) ? input.min || 0 : parseFloat(input.value);
+                    const min = input.min || 0;
+                    const max = input.max || 10;
+                    const step = input.step || 1;
+                    const sliderType = input.sliderType || 'integer';
+                    
+                    sliderHTML = `
+                        <div class="slider-container">
+                            <div class="slider-wrapper">
+                                <span class="slider-value">${numericValue}</span>
+                                <input type="range" 
+                                       class="slider ${sliderType}"
+                                       min="${min}" 
+                                       max="${max}" 
+                                       step="${step}" 
+                                       value="${numericValue}"
+                                       oninput="updateFromSlider('${input.id}', this.value)"
+                                       onchange="updateFromSlider('${input.id}', this.value)">
+                            </div>
+                            <div class="quick-adjust">
+                                <button class="adjust-btn" onclick="adjustValue('${input.id}', -${step})">
+                                    -${step}
+                                </button>
+                                <button class="adjust-btn" onclick="adjustValue('${input.id}', ${step})">
+                                    +${step}
+                                </button>
+                                <button class="adjust-btn primary" onclick="resetValue('${input.id}')">
+                                    Đặt lại
+                                </button>
+                                <div style="font-size: 11px; color: #9ca3af;">
+                                    [${min} → ${max}]
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                div.innerHTML = `
+                    <label class="input-label">
+                        ${input.label}
+                        ${input.slider ? `<span>Kéo thanh trượt →</span>` : ''}
+                    </label>
+                    <input type="text" 
+                           class="math-input" 
+                           id="input_${input.id}" 
+                           value="${input.value}"
+                           oninput="updateFormulaFromInput('${input.id}')"
+                           placeholder="Nhập giá trị...">
+                    ${sliderHTML}
+                `;
+                container.appendChild(div);
+            });
+        }
+        
+        // Điều chỉnh giá trị bằng nút
+        function adjustValue(inputId, delta) {
+            const inputElement = document.getElementById(`input_${inputId}`);
+            const input = currentFormula.inputs.find(i => i.id === inputId);
+            
+            if (input && input.slider) {
+                let currentValue = parseFloat(input.value);
+                if (isNaN(currentValue)) currentValue = input.min || 0;
+                
+                const min = input.min || 0;
+                const max = input.max || 10;
+                const step = input.step || 1;
+                
+                let newValue = currentValue + delta;
+                
+                // Giới hạn giá trị trong khoảng min-max
+                newValue = Math.max(min, Math.min(max, newValue));
+                
+                // Làm tròn nếu là số nguyên
+                if (input.sliderType === 'integer') {
+                    newValue = Math.round(newValue);
+                } else {
+                    // Giữ số thập phân phù hợp với step
+                    const decimals = step.toString().split('.')[1]?.length || 0;
+                    newValue = parseFloat(newValue.toFixed(decimals));
+                }
+                
+                input.value = newValue;
+                inputElement.value = newValue;
+                
+                // Cập nhật thanh trượt
+                const slider = inputElement.parentNode.querySelector('.slider');
+                if (slider) {
+                    slider.value = newValue;
+                    const valueDisplay = slider.parentNode.querySelector('.slider-value');
+                    if (valueDisplay) valueDisplay.textContent = newValue;
+                }
+                
+                updateLatexFromInputs();
+                updateDisplay();
+            }
+        }
+        
+        // Đặt lại giá trị mặc định
+        function resetValue(inputId) {
+            const input = currentFormula.inputs.find(i => i.id === inputId);
+            if (input && input.slider) {
+                const defaultValue = (input.min + input.max) / 2;
+                input.value = Math.round(defaultValue * 2) / 2;
+                
+                const inputElement = document.getElementById(`input_${inputId}`);
+                inputElement.value = input.value;
+                
+                const slider = inputElement.parentNode.querySelector('.slider');
+                if (slider) {
+                    slider.value = input.value;
+                    const valueDisplay = slider.parentNode.querySelector('.slider-value');
+                    if (valueDisplay) valueDisplay.textContent = input.value;
+                }
+                
+                updateLatexFromInputs();
+                updateDisplay();
+            }
+        }
+        
+        // Cập nhật từ thanh trượt
+        function updateFromSlider(inputId, value) {
+            const inputElement = document.getElementById(`input_${inputId}`);
+            const input = currentFormula.inputs.find(i => i.id === inputId);
+            
+            if (input) {
+                input.value = value;
+                inputElement.value = value;
+                
+                // Cập nhật hiển thị giá trị thanh trượt
+                const valueDisplay = inputElement.parentNode.querySelector('.slider-value');
+                if (valueDisplay) valueDisplay.textContent = value;
+                
+                updateLatexFromInputs();
+                updateDisplay();
+            }
+        }
+        
+        // Cập nhật công thức từ ô nhập
+        function updateFormulaFromInput(inputId) {
+            const inputElement = document.getElementById(`input_${inputId}`);
+            const newValue = inputElement.value || '';
+            
+            // Tìm và cập nhật giá trị trong inputs
+            const input = currentFormula.inputs.find(i => i.id === inputId);
+            if (input) {
+                input.value = newValue;
+                
+                // Cập nhật thanh trượt nếu có
+                if (input.slider) {
+                    const numericValue = parseFloat(newValue);
+                    if (!isNaN(numericValue)) {
+                        const slider = inputElement.parentNode.querySelector('.slider');
+                        if (slider) {
+                            const min = parseFloat(slider.min);
+                            const max = parseFloat(slider.max);
+                            const clampedValue = Math.max(min, Math.min(max, numericValue));
+                            slider.value = clampedValue;
+                            
+                            const valueDisplay = slider.parentNode.querySelector('.slider-value');
+                            if (valueDisplay) valueDisplay.textContent = clampedValue;
+                        }
+                    }
+                }
+            }
+            
+            // Cập nhật LaTeX dựa trên loại công thức
+            updateLatexFromInputs();
+            updateDisplay();
+        }
+        
+        // Cập nhật LaTeX từ các giá trị nhập
+        function updateLatexFromInputs() {
+            if (!currentFormula.type) return;
+            
+            switch(currentFormula.type) {
+                case 'quadratic':
+                    const a = currentFormula.inputs.find(i => i.id === 'a')?.value || 'a';
+                    const b = currentFormula.inputs.find(i => i.id === 'b')?.value || 'b';
+                    const c = currentFormula.inputs.find(i => i.id === 'c')?.value || 'c';
+                    currentFormula.latex = `${a}x^{2} + ${b}x + ${c} = 0`;
+                    break;
+                    
+                case 'fraction':
+                    const num = currentFormula.inputs.find(i => i.id === 'numerator')?.value || 'a';
+                    const den = currentFormula.inputs.find(i => i.id === 'denominator')?.value || 'b';
+                    currentFormula.latex = `\\frac{${num}}{${den}}`;
+                    break;
+                    
+                case 'superscript':
+                    const base = currentFormula.inputs.find(i => i.id === 'base')?.value || 'x';
+                    const exp = currentFormula.inputs.find(i => i.id === 'exponent')?.value || '2';
+                    currentFormula.latex = `${base}^{${exp}}`;
+                    break;
+                    
+                case 'subscript':
+                    const base2 = currentFormula.inputs.find(i => i.id === 'base')?.value || 'x';
+                    const sub = currentFormula.inputs.find(i => i.id === 'subscript')?.value || '1';
+                    currentFormula.latex = `${base2}_{${sub}}`;
+                    break;
+                    
+                case 'sqrt':
+                    const rad = currentFormula.inputs.find(i => i.id === 'radicand')?.value || 'x';
+                    currentFormula.latex = `\\sqrt{${rad}}`;
+                    break;
+                    
+                case 'nthroot':
+                    const deg = currentFormula.inputs.find(i => i.id === 'degree')?.value || 'n';
+                    const rad2 = currentFormula.inputs.find(i => i.id === 'radicand')?.value || 'x';
+                    currentFormula.latex = `\\sqrt[${deg}]{${rad2}}`;
+                    break;
+                    
+                case 'integral':
+                    const lower = currentFormula.inputs.find(i => i.id === 'lower')?.value || 'a';
+                    const upper = currentFormula.inputs.find(i => i.id === 'upper')?.value || 'b';
+                    const func = currentFormula.inputs.find(i => i.id === 'function')?.value || 'f(x)';
+                    const varInt = currentFormula.inputs.find(i => i.id === 'variable')?.value || 'x';
+                    currentFormula.latex = `\\int_{${lower}}^{${upper}} ${func} d${varInt}`;
+                    break;
+                    
+                case 'limit':
+                    const var_ = currentFormula.inputs.find(i => i.id === 'variable')?.value || 'x';
+                    const app = currentFormula.inputs.find(i => i.id === 'approach')?.value || 'a';
+                    const func2 = currentFormula.inputs.find(i => i.id === 'function')?.value || 'f(x)';
+                    currentFormula.latex = `\\lim_{${var_} \\to ${app}} ${func2}`;
+                    break;
+                    
+                case 'system':
+                    const a1 = currentFormula.inputs.find(i => i.id === 'a1')?.value || 'a';
+                    const b1 = currentFormula.inputs.find(i => i.id === 'b1')?.value || 'b';
+                    const c1 = currentFormula.inputs.find(i => i.id === 'c1')?.value || 'c';
+                    const a2 = currentFormula.inputs.find(i => i.id === 'a2')?.value || 'd';
+                    const b2 = currentFormula.inputs.find(i => i.id === 'b2')?.value || 'e';
+                    const c2 = currentFormula.inputs.find(i => i.id === 'c2')?.value || 'f';
+                    currentFormula.latex = `\\begin{cases} ${a1}x + ${b1}y = ${c1} \\\\ ${a2}x + ${b2}y = ${c2} \\end{cases}`;
+                    break;
+                    
+                case 'matrix':
+                    const ma = currentFormula.inputs.find(i => i.id === 'a')?.value || 'a';
+                    const mb = currentFormula.inputs.find(i => i.id === 'b')?.value || 'b';
+                    const mc = currentFormula.inputs.find(i => i.id === 'c')?.value || 'c';
+                    const md = currentFormula.inputs.find(i => i.id === 'd')?.value || 'd';
+                    currentFormula.latex = `\\begin{bmatrix} ${ma} & ${mb} \\\\ ${mc} & ${md} \\end{bmatrix}`;
+                    break;
+                    
+                case 'vector':
+                    const name = currentFormula.inputs.find(i => i.id === 'name')?.value || 'v';
+                    const vx = currentFormula.inputs.find(i => i.id === 'x')?.value || 'x';
+                    const vy = currentFormula.inputs.find(i => i.id === 'y')?.value || 'y';
+                    currentFormula.latex = `\\overrightarrow{${name}} = (${vx}, ${vy})`;
+                    break;
+            }
+        }
+        
+        // Xóa trình soạn thảo
+        function clearMathEditor() {
+            resetFormula();
+        }
+        
+        // Chèn công thức vào input chính
+        function insertFormulaToInput() {
+            const mainInput = document.getElementById('userInput');
+            const formula = currentFormula.latex;
+            
+            if (!formula) {
+                alert('Vui lòng tạo một công thức trước!');
+                return;
+            }
+            
+            // Thêm vào input chính
+            const startPos = mainInput.selectionStart;
+            const endPos = mainInput.selectionEnd;
+            const text = mainInput.value;
+            
+            // Chèn với định dạng LaTeX
+            const insertText = `$${formula}$`;
+            
+            mainInput.value = text.substring(0, startPos) + 
+                            insertText + 
+                            text.substring(endPos);
+            
+            // Đóng editor
+            closeMathEditor();
+            
+            // Focus và cập nhật
+            mainInput.focus();
+            mainInput.selectionStart = mainInput.selectionEnd = startPos + insertText.length;
+            mainInput.dispatchEvent(new Event('input'));
+        }
+        
+        // =============================================
+        // PHẦN CHAT AI
+        // =============================================
+        
         // API Configuration
         const _0x1a = "c2stcHJvai1jcnEzUlNSZnFGUTVLeWM5OTRmSVFsUEdhaGczaEps";
         const _0x2b = "TWlDMHhqLXlxR3BidnFlekYwaVFuTEx3SUF0Z2l4R19kM2lPSy1X";
@@ -516,20 +1867,65 @@
         
         let isLoading = false;
         
-        // 1. Hàm tiện ích
-        function formatText(text) {
-            return text
-                .replace(/\n\n/g, '</p><p>')
-                .replace(/\n/g, '<br>')
-                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                .replace(/\*(.*?)\*/g, '<em>$1</em>');
+        // Format tin nhắn từ AI
+        function formatAIResponse(text) {
+    let formatted = text;
+
+    // Chuyển đổi \[...\] thành $$...$$ để nhất quán
+    formatted = formatted.replace(/\\\[(.*?)\\\]/gs, function(match, formula) {
+        return `$$${formula}$$`;
+    });
+
+    // Chuyển đổi \(...\) thành $...$ để nhất quán
+    formatted = formatted.replace(/\\\((.*?)\\\)/g, function(match, formula) {
+        return `$${formula}$`;
+    });
+
+    // Lưu trữ các công thức display để tránh bị xử lý bởi inline regex
+    let displayMathBlocks = [];
+    formatted = formatted.replace(/\$\$([\s\S]*?)\$\$/g, function(match, formula) {
+        const index = displayMathBlocks.length;
+        displayMathBlocks.push(`<div class="math-display">$$${formula.trim()}$$</div>`);
+        return `%%DISPLAY_MATH_${index}%%`;
+    });
+
+    // Xử lý công thức inline (không ảnh hưởng đến display math đã được thay thế)
+    formatted = formatted.replace(/\$([^$]+?)\$/g, function(match, formula) {
+        // Kiểm tra nếu là công thức phức tạp (có \frac, \sqrt, v.v.) thì chuyển thành display
+        if (formula.includes('\\frac') || formula.includes('\\sqrt') ||
+            formula.includes('\\int') || formula.includes('\\sum') ||
+            formula.includes('\\lim') || formula.includes('\\begin')) {
+            return `<div class="math-display">$$${formula}$$</div>`;
         }
-        
-        // 2. Thêm tin nhắn
+        return `<span class="math-inline">$${formula}$</span>`;
+    });
+
+    // Khôi phục các công thức display
+    displayMathBlocks.forEach((block, index) => {
+        formatted = formatted.replace(`%%DISPLAY_MATH_${index}%%`, block);
+    });
+
+    // Đảm bảo mỗi dòng công thức đều được căn giữa đẹp
+    formatted = formatted.replace(/(\n\s*?\n)/g, '</p><p>');
+
+    // Format markdown đơn giản
+    formatted = formatted
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\*(.*?)\*/g, '<em>$1</em>')
+        .replace(/^\s*[-•]\s*(.*?)(?=\n|$)/gm, '• $1<br>')
+        .replace(/\n\n/g, '</p><p>')
+        .replace(/\n/g, '<br>');
+
+    // Thêm style để căn giữa công thức
+    formatted = `<div class="math-solution">${formatted}</div>`;
+
+    return formatted;
+}
+        // Thêm tin nhắn vào chat
         function addMessage(text, isUser) {
             const chatContainer = document.getElementById('chatContainer');
             
-            // Ẩn welcome screen khi có tin nhắn đầu tiên
+            // Ẩn welcome screen
             const welcomeScreen = document.getElementById('welcomeScreen');
             if (welcomeScreen && chatContainer.children.length === 1) {
                 welcomeScreen.style.display = 'none';
@@ -551,7 +1947,7 @@
             if (isUser) {
                 contentDiv.textContent = text;
             } else {
-                contentDiv.innerHTML = `<p>${formatText(text)}</p>`;
+                contentDiv.innerHTML = formatAIResponse(text);
             }
             
             containerDiv.appendChild(avatarDiv);
@@ -559,56 +1955,51 @@
             messageDiv.appendChild(containerDiv);
             chatContainer.appendChild(messageDiv);
             
-            // Scroll to bottom
+            // Scroll và render MathJax
             chatContainer.scrollTop = chatContainer.scrollHeight;
             
-            // Render MathJax cho tin nhắn bot
             if (!isUser && window.MathJax) {
                 setTimeout(() => {
-                    MathJax.typesetPromise([contentDiv]).catch(console.error);
+                    MathJax.typesetPromise([contentDiv]).then(() => {
+                        chatContainer.scrollTop = chatContainer.scrollHeight;
+                    });
                 }, 100);
             }
         }
         
-        // 3. Hiển thị typing indicator
+        // Hiển thị typing indicator
         function showTypingIndicator() {
             const chatContainer = document.getElementById('chatContainer');
             const indicatorDiv = document.createElement('div');
             indicatorDiv.className = 'chat-message assistant';
             indicatorDiv.id = 'typingIndicator';
             
-            const containerDiv = document.createElement('div');
-            containerDiv.className = 'message-container';
-            
-            const avatarDiv = document.createElement('div');
-            avatarDiv.className = 'avatar assistant';
-            avatarDiv.innerHTML = '<i class="fas fa-robot"></i>';
-            
-            const contentDiv = document.createElement('div');
-            contentDiv.className = 'message-content';
-            contentDiv.innerHTML = `
-                <div class="typing-indicator">
-                    <div class="typing-dot"></div>
-                    <div class="typing-dot"></div>
-                    <div class="typing-dot"></div>
+            indicatorDiv.innerHTML = `
+                <div class="message-container">
+                    <div class="avatar assistant">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div class="message-content">
+                        <div class="typing-indicator">
+                            <div class="typing-dot"></div>
+                            <div class="typing-dot"></div>
+                            <div class="typing-dot"></div>
+                        </div>
+                    </div>
                 </div>
             `;
             
-            containerDiv.appendChild(avatarDiv);
-            containerDiv.appendChild(contentDiv);
-            indicatorDiv.appendChild(containerDiv);
             chatContainer.appendChild(indicatorDiv);
-            
             chatContainer.scrollTop = chatContainer.scrollHeight;
         }
         
-        // 4. Xóa typing indicator
+        // Ẩn typing indicator
         function hideTypingIndicator() {
             const indicator = document.getElementById('typingIndicator');
             if (indicator) indicator.remove();
         }
         
-        // 5. Gửi tin nhắn
+        // Gửi tin nhắn đến AI
         async function sendMessage() {
             if (isLoading) return;
             
@@ -618,28 +2009,15 @@
             
             if (!text) return;
             
-            // Thêm tin nhắn user
             addMessage(text, true);
             input.value = '';
             input.style.height = 'auto';
             
-            // Hiển thị typing indicator
             showTypingIndicator();
             isLoading = true;
             button.disabled = true;
             
             try {
-                // System prompt đơn giản
-                const systemPrompt = `Bạn là trợ lý toán học chuyên nghiệp. Giải thích chi tiết từng bước.
-                
-                Khi viết công thức toán:
-                - Dùng $công_thức$ cho công thức trong dòng
-                - Dùng $$công_thức$$ cho công thức riêng dòng
-                - Luôn trả lời bằng tiếng Việt
-                - Giải thích từng bước rõ ràng
-                
-                Ví dụ: Phương trình $x^2 - 5x + 6 = 0$ có nghiệm $$x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}$$`;
-                
                 const response = await fetch('https://api.openai.com/v1/chat/completions', {
                     method: 'POST',
                     headers: {
@@ -649,34 +2027,58 @@
                     body: JSON.stringify({
                         model: 'gpt-3.5-turbo',
                         messages: [
-                            { role: 'system', content: systemPrompt },
+                            { 
+    role: 'system', 
+    content: `Bạn là giáo viên toán học chuyên nghiệp. Khi trả lời BẮT BUỘC phải theo đúng trình tự sau:
+
+1. PHÂN TÍCH HƯỚNG GIẢI:
+   • Phân tích đề bài và xác định phương pháp giải
+   • Nêu các bước sẽ thực hiện
+
+2. CÔNG THỨC ĐÃ SỬ DỤNG:
+   • Liệt kê tất cả công thức toán học sẽ áp dụng
+   • Giải thích ngắn gọn từng công thức
+
+3. LỜI GIẢI CHI TIẾT:
+   • Trình bày lời giải tự luận từng bước
+   • Mỗi bước tính toán phải rõ ràng, có giải thích
+
+QUY TẮC VIẾT CÔNG THỨC (RẤT QUAN TRỌNG):
+- Mỗi công thức toán PHẢI viết trên một dòng riêng
+- Sử dụng $$công_thức$$ cho tất cả công thức (KHÔNG dùng inline $...$)
+- Ví dụ đúng:
+  $$x^2 + 2x + 1 = 0$$
+  $$x^2 + 2x + 1 = (x + 1)^2$$
+  $$(x + 1)^2 = 0 \Rightarrow x + 1 = 0 \Rightarrow x = -1$$
+
+- KHÔNG viết nhiều công thức trên cùng một dòng
+- KHÔNG để lỗi LaTeX chưa định dạng (phải có đủ $$ ở đầu và cuối)
+- Công thức phải sạch sẽ, dễ đọc
+
+Khi trình bày lời giải:
++ Mỗi bước biến đổi là một dòng công thức riêng
++ Có giải thích ngắn giữa các công thức
++ Kết quả cuối cùng phải rõ ràng`
+},
                             { role: 'user', content: text }
                         ],
                         temperature: 0.1,
-                        max_tokens: 1500
+                        max_tokens: 2000
                     })
                 });
                 
                 hideTypingIndicator();
                 
-                if (!response.ok) {
-                    const error = await response.text();
-                    throw new Error(`HTTP ${response.status}: ${error}`);
-                }
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
                 
                 const data = await response.json();
-                
-                if (data.choices && data.choices[0] && data.choices[0].message) {
-                    const reply = data.choices[0].message.content;
-                    addMessage(reply, false);
-                } else {
-                    throw new Error('Không nhận được phản hồi hợp lệ');
-                }
+                const reply = data.choices[0].message.content;
+                addMessage(reply, false);
                 
             } catch (error) {
                 hideTypingIndicator();
                 console.error('Error:', error);
-                addMessage(`⚠️ Đã xảy ra lỗi: ${error.message}. Vui lòng thử lại.`, false);
+                addMessage('⚠️ Đã xảy ra lỗi. Vui lòng thử lại.', false);
             } finally {
                 isLoading = false;
                 button.disabled = false;
@@ -684,31 +2086,46 @@
             }
         }
         
-        // 6. Xóa cuộc trò chuyện
+        // Xóa chat
         function clearChat() {
             const chatContainer = document.getElementById('chatContainer');
             const welcomeScreen = document.getElementById('welcomeScreen');
             
-            // Xóa tất cả tin nhắn trừ welcome screen
             while (chatContainer.children.length > 1) {
                 chatContainer.removeChild(chatContainer.lastChild);
             }
             
-            // Hiện lại welcome screen
             if (welcomeScreen) {
                 welcomeScreen.style.display = 'block';
             }
             
-            // Focus input
             document.getElementById('userInput').focus();
         }
         
-        // 7. Event Listeners
+        // Thêm ví dụ
+        function addExample() {
+            const examples = [
+                "Giải phương trình: $x^2 - 5x + 6 = 0$",
+                "Tính đạo hàm của: $f(x) = 3x^3 - 2x^2 + 5x - 1$",
+                "Tính tích phân: $\int_0^1 (x^2 + 2x) dx$",
+                "Giải hệ phương trình: $\begin{cases} 2x + y = 5 \\\\ x - y = 1 \end{cases}$"
+            ];
+            
+            const randomExample = examples[Math.floor(Math.random() * examples.length)];
+            document.getElementById('userInput').value = randomExample;
+        }
+        
+        // =============================================
+        // EVENT LISTENERS
+        // =============================================
+        
+        // Auto-resize textarea
         document.getElementById('userInput').addEventListener('input', function() {
             this.style.height = 'auto';
             this.style.height = Math.min(this.scrollHeight, 200) + 'px';
         });
         
+        // Enter để gửi
         document.getElementById('userInput').addEventListener('keydown', function(e) {
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
@@ -716,47 +2133,21 @@
             }
         });
         
+        // Các nút
         document.getElementById('sendButton').addEventListener('click', sendMessage);
-        
-        // Nút xóa cuộc trò chuyện
+        document.getElementById('mathBtn').addEventListener('click', openMathEditor);
         document.getElementById('clearBtn').addEventListener('click', clearChat);
+        document.getElementById('exampleBtn').addEventListener('click', addExample);
         
-        // Nút trợ giúp
-        document.getElementById('helpBtn').addEventListener('click', function() {
-            addMessage("Tôi có thể giúp bạn giải các bài toán như: giải phương trình, tính đạo hàm, tích phân, giới hạn, và nhiều dạng toán khác. Hãy nhập câu hỏi toán học của bạn!", false);
-        });
-        
-        // Nút tìm kiếm (chức năng đơn giản)
-        document.getElementById('searchBtn').addEventListener('click', function() {
-            document.getElementById('userInput').focus();
-            document.getElementById('userInput').value = "Tìm kiếm bài toán...";
-            document.getElementById('userInput').select();
-        });
-        
-        // 8. Focus input khi trang load
+        // Focus khi load
         window.addEventListener('load', function() {
             document.getElementById('userInput').focus();
-            
-            // Test MathJax với welcome message
-            setTimeout(() => {
-                if (window.MathJax) {
-                    MathJax.typesetPromise();
-                }
-            }, 1000);
         });
         
-        // 9. Auto-resize input
-        function resizeInput() {
-            const input = document.getElementById('userInput');
-            input.style.height = 'auto';
-            input.style.height = Math.min(input.scrollHeight, 200) + 'px';
-        }
-        
-        
-        
-        // Thay đổi placeholder mỗi 10 giây
-        setInterval(addMathExample, 10000);
-        addMathExample(); // Gọi lần đầu
+        // Cho phép cuộn trong modal
+        document.getElementById('mathInputFields').addEventListener('wheel', function(e) {
+            e.stopPropagation();
+        });
     </script>
 </body>
 </html>
