@@ -1548,8 +1548,7 @@
             const totalScore = mcScore + tfScore + saScore;
 return { mcScore, tfScore, saScore, totalScore };
         }
-
-        // Hàm hiển thị đáp án sau khi thi
+       // Hàm hiển thị đáp án sau khi thi
 function showAnswerReview(scores) {
     const answerDetails = document.getElementById('answer-details');
     answerDetails.innerHTML = '';
@@ -1713,6 +1712,78 @@ function addAnswerReviewButton() {
         }
     }
 }
+
+// Sửa hàm submitExam để gọi các hàm hiển thị đáp án
+function submitExam() {
+    clearInterval(timerInterval);
+    isExamActive = false;
+    
+    // Thoát khỏi chế độ fullscreen trước
+    if (isFullscreen) {
+        exitFullscreen();
+    }
+    
+    // Ẩn phần làm bài, hiển thị kết quả
+    document.getElementById('exam-container').style.display = 'none';
+    document.getElementById('result-container').style.display = 'block';
+    
+    // Tính điểm (0 điểm nếu phát hiện gian lận)
+    let totalScore = 0;
+    let mcScore = 0;
+    let tfScore = 0;
+    let saScore = 0;
+    let isZeroDueToCheating = false;
+    
+    if (cheatDetected) {
+        totalScore = 0;
+        isZeroDueToCheating = true;
+        document.getElementById('score').textContent = `0/10`;
+        document.getElementById('score').className = 'score score-zero';
+        document.getElementById('result-details').textContent = 
+            `Bài thi ${getExamName(selectedExam)} của bạn bị hủy do vi phạm quy chế thi.`;
+        document.getElementById('cheat-penalty-message').style.display = 'block';
+        document.getElementById('answer-review').style.display = 'none';
+        
+        // Đặt tất cả điểm chi tiết về 0
+        document.getElementById('mc-score').textContent = '0';
+        document.getElementById('tf-score').textContent = '0';
+        document.getElementById('sa-score').textContent = '0';
+    } else {
+        // Tính điểm chi tiết
+        const scores = calculateDetailedScores();
+        mcScore = scores.mcScore;
+        tfScore = scores.tfScore;
+        saScore = scores.saScore;
+        totalScore = scores.totalScore;
+        
+        // Hiển thị điểm
+        document.getElementById('score').textContent = `${totalScore.toFixed(2)}/10`;
+        document.getElementById('score').className = 'score';
+        document.getElementById('result-details').textContent = 
+            `Bạn đã hoàn thành bài thi ${getExamName(selectedExam)} với số điểm ${totalScore.toFixed(2)}/10.`;
+        document.getElementById('cheat-penalty-message').style.display = 'none';
+        document.getElementById('answer-review').style.display = 'block';
+        
+        // Hiển thị điểm chi tiết
+        document.getElementById('mc-score').textContent = mcScore.toFixed(2);
+        document.getElementById('tf-score').textContent = tfScore.toFixed(2);
+        document.getElementById('sa-score').textContent = saScore.toFixed(2);
+        
+        // Hiển thị đánh giá chi tiết
+        showAnswerReview(scores);
+        
+        // Thêm nút xem đáp án chi tiết
+        addAnswerReviewButton();
+        
+        // Tải đáp án mẫu (để kiểm tra)
+        generateSampleAnswers();
+    }
+    
+    // Cuộn đến phần kết quả
+    document.getElementById('result-container').scrollIntoView({ behavior: 'smooth' });
+}
+
+       
             
             answerDetails.innerHTML = mcReview + tfReview + saReview;
         }
@@ -1908,5 +1979,6 @@ function addAnswerReviewButton() {
    </script>
 </body>
 </html>
+
 
 
