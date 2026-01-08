@@ -1549,67 +1549,170 @@
 return { mcScore, tfScore, saScore, totalScore };
         }
 
-        // Hàm hiển thị đánh giá chi tiết
-        function showAnswerReview(scores) {
-            const answerDetails = document.getElementById('answer-details');
-            answerDetails.innerHTML = '';
+        // Hàm hiển thị đáp án sau khi thi
+function showAnswerReview(scores) {
+    const answerDetails = document.getElementById('answer-details');
+    answerDetails.innerHTML = '';
+    
+    const answers = examAnswers[selectedExam];
+    if (!answers) return;
+    
+    let reviewContent = '<div style="text-align: left;">';
+    
+    // Hiển thị đáp án phần trắc nghiệm nhiều lựa chọn
+    reviewContent += '<h4 style="color: #2575fc; margin-top: 15px;">Phần A: Trắc nghiệm nhiều lựa chọn (12 câu × 0.25 điểm)</h4>';
+    for (let i = 1; i <= 12; i++) {
+        const selectedAnswer = document.querySelector(`input[name="q${i}"]:checked`);
+        const userAnswer = selectedAnswer ? selectedAnswer.value : 'Chưa chọn';
+        const correctAnswer = answers.multipleChoice[i-1];
+        const isCorrect = userAnswer === correctAnswer;
+        
+        reviewContent += `<div style="margin-bottom: 10px; padding: 10px; border-left: 3px solid ${isCorrect ? '#27ae60' : '#e74c3c'}; background-color: #f8f9fa;">`;
+        reviewContent += `<strong>Câu ${i}:</strong><br>`;
+        reviewContent += `Đáp án của bạn: <span class="user-answer" style="font-weight: bold;">${userAnswer}</span><br>`;
+        
+        if (isCorrect) {
+            reviewContent += `<span class="correct-answer" style="color: #27ae60;">✓ Đúng (+0.25 điểm)</span>`;
+        } else {
+            reviewContent += `<span class="wrong-answer" style="color: #e74c3c;">✗ Sai - Đáp án đúng: <span class="correct-answer" style="color: #27ae60;">${correctAnswer}</span></span>`;
+        }
+        reviewContent += '</div>';
+    }
+    
+    // Hiển thị đáp án phần đúng/sai
+    reviewContent += '<h4 style="color: #2575fc; margin-top: 20px;">Phần B: Trắc nghiệm đúng/sai (3 câu × 1 điểm)</h4>';
+    for (let i = 1; i <= 4; i++) {
+        const correctAnswers = answers.trueFalse[i-1];
+        reviewContent += `<div style="margin-bottom: 15px; padding: 10px; background-color: #f8f9fa; border-radius: 5px;">`;
+        reviewContent += `<strong>Câu ${i}:</strong><br>`;
+        
+        const subQuestions = ['a', 'b', 'c', 'd'];
+        let correctSubCount = 0;
+        
+        reviewContent += '<div style="margin-left: 15px;">';
+        subQuestions.forEach((sub, index) => {
+            const selectedAnswer = document.querySelector(`input[name="tf${i}_${sub}"]:checked`);
+            const userAnswer = selectedAnswer ? (selectedAnswer.value === 'true' ? 'Đúng' : 'Sai') : 'Chưa chọn';
+            const correctAnswer = correctAnswers[index];
+            const isCorrect = userAnswer === correctAnswer;
             
-            const answers = examAnswers[selectedExam];
-            if (!answers) return;
+            if (isCorrect) correctSubCount++;
             
-            // Hiển thị đáp án phần trắc nghiệm nhiều lựa chọn
-            let mcReview = '<h4>Phần A: Trắc nghiệm nhiều lựa chọn</h4>';
-            for (let i = 1; i <= 12; i++) {
-                const selectedAnswer = document.querySelector(`input[name="q${i}"]:checked`);
-                const userAnswer = selectedAnswer ? selectedAnswer.value : 'Chưa chọn';
-                const correctAnswer = answers.multipleChoice[i-1];
-                const isCorrect = userAnswer === correctAnswer;
-                
-                mcReview += `<p>Câu ${i}: `;
-                mcReview += `<span class="user-answer">${userAnswer}</span> `;
-                mcReview += isCorrect ? 
-                    `<span class="correct-answer">(Đúng)</span>` : 
-                    `<span class="wrong-answer">(Sai) - Đáp án đúng: <span class="correct-answer">${correctAnswer}</span></span>`;
-                mcReview += '</p>';
+            reviewContent += `<div style="margin-bottom: 5px;">`;
+            reviewContent += `Ý ${sub}: `;
+            reviewContent += `<span class="user-answer" style="font-weight: bold;">${userAnswer}</span> - `;
+            
+            if (isCorrect) {
+                reviewContent += `<span class="correct-answer" style="color: #27ae60;">✓ Đúng</span>`;
+            } else {
+                reviewContent += `<span class="wrong-answer" style="color: #e74c3c;">✗ Sai (Đáp án đúng: <span class="correct-answer" style="color: #27ae60;">${correctAnswer}</span>)</span>`;
             }
-            
-            // Hiển thị đáp án phần đúng/sai
-            let tfReview = '<h4>Phần B: Trắc nghiệm đúng/sai</h4>';
-            for (let i = 1; i <= 4; i++) {
-                const correctAnswers = answers.trueFalse[i-1];
-                tfReview += `<p>Câu ${i}:</p><ul>`;
-                
-                const subQuestions = ['a', 'b', 'c', 'd'];
-                subQuestions.forEach((sub, index) => {
-                    const selectedAnswer = document.querySelector(`input[name="tf${i}_${sub}"]:checked`);
-                    const userAnswer = selectedAnswer ? (selectedAnswer.value === 'true' ? 'Đúng' : 'Sai') : 'Chưa chọn';
-                    const correctAnswer = correctAnswers[index];
-                    const isCorrect = userAnswer === correctAnswer;
-                    
-                    tfReview += `<li>Ý ${sub}: `;
-                    tfReview += `<span class="user-answer">${userAnswer}</span> `;
-                    tfReview += isCorrect ? 
-                        `<span class="correct-answer">(Đúng)</span>` : 
-                        `<span class="wrong-answer">(Sai) - Đáp án đúng: <span class="correct-answer">${correctAnswer}</span></span>`;
-                    tfReview += '</li>';
-                });
-                tfReview += '</ul>';
+            reviewContent += '</div>';
+        });
+        reviewContent += '</div>';
+        
+        // Hiển thị điểm cho từng câu
+        const subScore = correctSubCount * 0.25;
+        reviewContent += `<div style="margin-top: 5px; padding: 5px; background-color: ${subScore === 1 ? '#d4edda' : '#f8d7da'}; border-radius: 3px;">`;
+        reviewContent += `Điểm câu ${i}: <strong>${subScore.toFixed(2)}/1.00</strong> (${correctSubCount}/4 ý đúng)`;
+        reviewContent += '</div>';
+        
+        reviewContent += '</div>';
+    }
+    
+    // Hiển thị đáp án phần trả lời ngắn
+    reviewContent += '<h4 style="color: #2575fc; margin-top: 20px;">Phần C: Trả lời ngắn (8 câu × 0.5 điểm)</h4>';
+    reviewContent += '<p style="color: #666; font-size: 0.9em;">Lưu ý: Đáp án có phân biệt chữ hoa/chữ thường và định dạng</p>';
+    
+    for (let i = 1; i <= 8; i++) {
+        const userAnswer = document.getElementById(`sa${i}`) ? document.getElementById(`sa${i}`).value.trim() : '';
+        const correctAnswer = answers.shortAnswer[i-1] || '';
+        const isCorrect = userAnswer === correctAnswer;
+        
+        reviewContent += `<div style="margin-bottom: 10px; padding: 10px; border-left: 3px solid ${isCorrect ? '#27ae60' : '#e74c3c'}; background-color: #f8f9fa;">`;
+        reviewContent += `<strong>Câu ${i}:</strong><br>`;
+        reviewContent += `Đáp án của bạn: <span class="user-answer" style="font-weight: bold; background-color: #e3f2fd; padding: 2px 5px; border-radius: 3px;">${userAnswer || 'Chưa trả lời'}</span><br>`;
+        reviewContent += `Đáp án đúng: <span class="correct-answer" style="color: #27ae60; font-weight: bold; background-color: #d4edda; padding: 2px 5px; border-radius: 3px;">${correctAnswer}</span><br>`;
+        
+        if (isCorrect) {
+            reviewContent += `<span class="correct-answer" style="color: #27ae60;">✓ Đúng (+0.5 điểm)</span>`;
+        } else {
+            reviewContent += `<span class="wrong-answer" style="color: #e74c3c;">✗ Sai</span>`;
+        }
+        reviewContent += '</div>';
+    }
+    
+    // Hiển thị tổng kết điểm
+    reviewContent += '<h4 style="color: #2575fc; margin-top: 20px;">Tổng kết điểm</h4>';
+    reviewContent += '<div style="background-color: #f0f8ff; padding: 15px; border-radius: 5px; border: 1px solid #2575fc;">';
+    reviewContent += `<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; text-align: center;">`;
+    reviewContent += `<div style="background-color: white; padding: 10px; border-radius: 5px;">
+        <div style="font-size: 1.2em; font-weight: bold; color: #2575fc;">${scores.mcScore.toFixed(2)}/3.00</div>
+        <div style="font-size: 0.9em; color: #666;">Trắc nghiệm</div>
+    </div>`;
+    reviewContent += `<div style="background-color: white; padding: 10px; border-radius: 5px;">
+        <div style="font-size: 1.2em; font-weight: bold; color: #6a11cb;">${scores.tfScore.toFixed(2)}/3.00</div>
+        <div style="font-size: 0.9em; color: #666;">Đúng/Sai</div>
+    </div>`;
+    reviewContent += `<div style="background-color: white; padding: 10px; border-radius: 5px;">
+        <div style="font-size: 1.2em; font-weight: bold; color: #2ecc71;">${scores.saScore.toFixed(2)}/4.00</div>
+        <div style="font-size: 0.9em; color: #666;">Trả lời ngắn</div>
+    </div>`;
+    reviewContent += `</div>`;
+    reviewContent += `<div style="text-align: center; margin-top: 15px; font-size: 1.2em;">
+        <strong>Tổng điểm:</strong> <span style="color: #e74c3c; font-weight: bold; font-size: 1.5em;">${scores.totalScore.toFixed(2)}/10.00</span>
+    </div>`;
+    reviewContent += '</div>';
+    
+    reviewContent += '</div>';
+    
+    answerDetails.innerHTML = reviewContent;
+}
+
+// Hàm tải đáp án mẫu (chỉ để minh họa)
+function generateSampleAnswers() {
+    const answers = examAnswers[selectedExam];
+    if (!answers) return;
+    
+    console.log("Đáp án cho đề thi:", getExamName(selectedExam));
+    console.log("Phần A - Trắc nghiệm nhiều lựa chọn:", answers.multipleChoice);
+    console.log("Phần B - Đúng/Sai:", answers.trueFalse);
+    console.log("Phần C - Trả lời ngắn:", answers.shortAnswer);
+}
+
+// Thêm nút xem đáp án chi tiết
+function addAnswerReviewButton() {
+    const resultContainer = document.getElementById('result-container');
+    const existingButton = document.getElementById('toggle-answers-btn');
+    
+    if (!existingButton) {
+        const toggleButton = document.createElement('button');
+        toggleButton.id = 'toggle-answers-btn';
+        toggleButton.className = 'btn btn-secondary';
+        toggleButton.style.marginTop = '15px';
+        toggleButton.textContent = 'Hiển thị/Ẩn đáp án chi tiết';
+        toggleButton.onclick = function() {
+            const answerReview = document.getElementById('answer-review');
+            if (answerReview.style.display === 'none' || answerReview.style.display === '') {
+                answerReview.style.display = 'block';
+                toggleButton.textContent = 'Ẩn đáp án chi tiết';
+                // Tự động cuộn đến phần đáp án
+                setTimeout(() => {
+                    answerReview.scrollIntoView({ behavior: 'smooth' });
+                }, 100);
+            } else {
+                answerReview.style.display = 'none';
+                toggleButton.textContent = 'Hiển thị đáp án chi tiết';
             }
-            
-            // Hiển thị đáp án phần trả lời ngắn
-            let saReview = '<h4>Phần C: Trả lời ngắn</h4>';
-            for (let i = 1; i <= 8; i++) {
-                const userAnswer = document.getElementById(`sa${i}`).value.trim();
-                const correctAnswer = answers.shortAnswer[i-1];
-                const isCorrect = userAnswer === correctAnswer;
-                
-                saReview += `<p>Câu ${i}: `;
-                saReview += `<span class="user-answer">${userAnswer || 'Chưa trả lời'}</span> `;
-                saReview += isCorrect ? 
-                    `<span class="correct-answer">(Đúng)</span>` : 
-                    `<span class="wrong-answer">(Sai) - Đáp án đúng: <span class="correct-answer">${correctAnswer}</span></span>`;
-                saReview += '</p>';
-            }
+        };
+        
+        // Chèn nút vào sau phần điểm chi tiết
+        const scoreDetails = document.querySelector('.score-details');
+        if (scoreDetails && scoreDetails.parentNode) {
+            scoreDetails.parentNode.insertBefore(toggleButton, scoreDetails.nextSibling);
+        }
+    }
+}
             
             answerDetails.innerHTML = mcReview + tfReview + saReview;
         }
@@ -1805,4 +1908,5 @@ return { mcScore, tfScore, saScore, totalScore };
    </script>
 </body>
 </html>
+
 
