@@ -788,10 +788,10 @@ body:-ms-fullscreen .exam-frame {
                     <div id="toan12-ck1-codes" class="exam-codes">
                         <p>Chọn đề:</p>
                         <div class="exam-codes-list">
-                            <div class="exam-code" onclick="selectExamCode('toan12-ck1', '001')">Mã đề 001</div>
-                            <div class="exam-code" onclick="selectExamCode('toan12-ck1', '002')">Mã đề 002</div>
-                            <div class="exam-code" onclick="selectExamCode('toan12-ck1', '003')">Mã đề 003</div>
-                            <div class="exam-code" onclick="selectExamCode('toan12-ck1', '004')">Mã đề 004</div>
+                            <div class="exam-code" onclick="selectExamCode('toan12-ck1', '001')">Đề số 1</div>
+                            <div class="exam-code" onclick="selectExamCode('toan12-ck1', '002')">Đề số 2</div>
+                            <div class="exam-code" onclick="selectExamCode('toan12-ck1', '003')">Đề số 3</div>
+                            <div class="exam-code" onclick="selectExamCode('toan12-ck1', '004')">Đề số 4</div>
                         </div>
                     </div>
                     
@@ -919,7 +919,6 @@ body:-ms-fullscreen .exam-frame {
         </div>
         
         <footer>
-            <p>Web Thi Toán &copy; 2024</p>
             <p style="font-size: 0.9rem; color: #e74c3c; margin-top: 10px;">Hệ thống có tính năng chống gian lận - Không thoát màn hình khi đang thi</p>
         </footer>
     </div>
@@ -935,9 +934,9 @@ body:-ms-fullscreen .exam-frame {
     let lastFocusTime = Date.now();
     let visibilityWarningShown = false;
     
-    // Đáp án cho đề thi (bạn có thể thêm vào đây)
+    // Đáp án cho đề thi 
     const examAnswers = {
-        // Mẫu cấu trúc đáp án
+        
         'toan10-gk1-001': {
             multipleChoice: [
                 'C', 'D', 'A', 'A', 'A', 'D', 'B', 'D', 'B', 'C',
@@ -952,7 +951,759 @@ body:-ms-fullscreen .exam-frame {
                 '0.19', '53', '4', '3.25', '-2;2', '34.2', '2', '5/12'
             ]
         },
-        // Bạn có thể thêm các mã đề khác tại đây
+        'toan10-gk1-002': {
+            multipleChoice: [
+                'C', 'D', 'A', 'A', 'A', 'D', 'B', 'D', 'B', 'C',
+                'A', 'D'
+            ],
+            trueFalse: [
+                ['Đúng', 'Sai', 'Đúng', 'Sai'],
+                ['Đúng', 'Sai', 'Sai', 'Đúng'],
+                ['Sai', 'Đúng', 'Sai', 'Đúng']
+            ],
+            shortAnswer: [
+                '0.19', '53', '4', '3.25', '-2;2', '34.2', '2', '5/12'
+            ]
+        },
+        'toan10-gk1-003': {
+            multipleChoice: [
+                'C', 'D', 'A', 'A', 'A', 'D', 'B', 'D', 'B', 'C',
+                'A', 'D'
+            ],
+            trueFalse: [
+                ['Đúng', 'Sai', 'Đúng', 'Sai'],
+                ['Đúng', 'Sai', 'Sai', 'Đúng'],
+                ['Sai', 'Đúng', 'Sai', 'Đúng']
+            ],
+            shortAnswer: [
+                '0.19', '53', '4', '3.25', '-2;2', '34.2', '2', '5/12'
+            ]
+        },
+        'toan10-gk1-004': {
+            multipleChoice: [
+                'C', 'D', 'A', 'A', 'A', 'D', 'B', 'D', 'B', 'C',
+                'A', 'D'
+            ],
+            trueFalse: [
+                ['Đúng', 'Sai', 'Đúng', 'Sai'],
+                ['Đúng', 'Sai', 'Sai', 'Đúng'],
+                ['Sai', 'Đúng', 'Sai', 'Đúng']
+            ],
+            shortAnswer: [
+                '0.19', '53', '4', '3.25', '-2;2', '34.2', '2', '5/12'
+            ]
+        },
+        'toan10-ck1-001': {
+            multipleChoice: [
+                'C', 'D', 'A', 'A', 'A', 'D', 'B', 'D', 'B', 'C',
+                'A', 'D'
+            ],
+            trueFalse: [
+                ['Đúng', 'Sai', 'Đúng', 'Sai'],
+                ['Đúng', 'Sai', 'Sai', 'Đúng'],
+                ['Sai', 'Đúng', 'Sai', 'Đúng']
+            ],
+            shortAnswer: [
+                '0.19', '53', '4', '3.25', '-2;2', '34.2', '2', '5/12'
+            ]
+        },
+        'toan10-ck1-002': {
+            multipleChoice: [
+                'C', 'D', 'A', 'A', 'A', 'D', 'B', 'D', 'B', 'C',
+                'A', 'D'
+            ],
+            trueFalse: [
+                ['Đúng', 'Sai', 'Đúng', 'Sai'],
+                ['Đúng', 'Sai', 'Sai', 'Đúng'],
+                ['Sai', 'Đúng', 'Sai', 'Đúng']
+            ],
+            shortAnswer: [
+                '0.19', '53', '4', '3.25', '-2;2', '34.2', '2', '5/12'
+            ]
+        },
+        'toan10-ck1-003': {
+            multipleChoice: [
+                'C', 'D', 'A', 'A', 'A', 'D', 'B', 'D', 'B', 'C',
+                'A', 'D'
+            ],
+            trueFalse: [
+                ['Đúng', 'Sai', 'Đúng', 'Sai'],
+                ['Đúng', 'Sai', 'Sai', 'Đúng'],
+                ['Sai', 'Đúng', 'Sai', 'Đúng']
+            ],
+            shortAnswer: [
+                '0.19', '53', '4', '3.25', '-2;2', '34.2', '2', '5/12'
+            ]
+        },
+        'toan10-ck1-004': {
+            multipleChoice: [
+                'C', 'D', 'A', 'A', 'A', 'D', 'B', 'D', 'B', 'C',
+                'A', 'D'
+            ],
+            trueFalse: [
+                ['Đúng', 'Sai', 'Đúng', 'Sai'],
+                ['Đúng', 'Sai', 'Sai', 'Đúng'],
+                ['Sai', 'Đúng', 'Sai', 'Đúng']
+            ],
+            shortAnswer: [
+                '0.19', '53', '4', '3.25', '-2;2', '34.2', '2', '5/12'
+            ]
+        },
+        'toan10-gk2-001': {
+            multipleChoice: [
+                'C', 'D', 'A', 'A', 'A', 'D', 'B', 'D', 'B', 'C',
+                'A', 'D'
+            ],
+            trueFalse: [
+                ['Đúng', 'Sai', 'Đúng', 'Sai'],
+                ['Đúng', 'Sai', 'Sai', 'Đúng'],
+                ['Sai', 'Đúng', 'Sai', 'Đúng']
+            ],
+            shortAnswer: [
+                '0.19', '53', '4', '3.25', '-2;2', '34.2', '2', '5/12'
+            ]
+        },
+        'toan10-gk2-002': {
+            multipleChoice: [
+                'C', 'D', 'A', 'A', 'A', 'D', 'B', 'D', 'B', 'C',
+                'A', 'D'
+            ],
+            trueFalse: [
+                ['Đúng', 'Sai', 'Đúng', 'Sai'],
+                ['Đúng', 'Sai', 'Sai', 'Đúng'],
+                ['Sai', 'Đúng', 'Sai', 'Đúng']
+            ],
+            shortAnswer: [
+                '0.19', '53', '4', '3.25', '-2;2', '34.2', '2', '5/12'
+            ]
+        },
+        'toan10-gk2-003': {
+            multipleChoice: [
+                'C', 'D', 'A', 'A', 'A', 'D', 'B', 'D', 'B', 'C',
+                'A', 'D'
+            ],
+            trueFalse: [
+                ['Đúng', 'Sai', 'Đúng', 'Sai'],
+                ['Đúng', 'Sai', 'Sai', 'Đúng'],
+                ['Sai', 'Đúng', 'Sai', 'Đúng']
+            ],
+            shortAnswer: [
+                '0.19', '53', '4', '3.25', '-2;2', '34.2', '2', '5/12'
+            ]
+        },'toan10-gk2-004': {
+            multipleChoice: [
+                'C', 'D', 'A', 'A', 'A', 'D', 'B', 'D', 'B', 'C',
+                'A', 'D'
+            ],
+            trueFalse: [
+                ['Đúng', 'Sai', 'Đúng', 'Sai'],
+                ['Đúng', 'Sai', 'Sai', 'Đúng'],
+                ['Sai', 'Đúng', 'Sai', 'Đúng']
+            ],
+            shortAnswer: [
+                '0.19', '53', '4', '3.25', '-2;2', '34.2', '2', '5/12'
+            ]
+        },
+        'toan10-ck2-001': {
+            multipleChoice: [
+                'C', 'D', 'A', 'A', 'A', 'D', 'B', 'D', 'B', 'C',
+                'A', 'D'
+            ],
+            trueFalse: [
+                ['Đúng', 'Sai', 'Đúng', 'Sai'],
+                ['Đúng', 'Sai', 'Sai', 'Đúng'],
+                ['Sai', 'Đúng', 'Sai', 'Đúng']
+            ],
+            shortAnswer: [
+                '0.19', '53', '4', '3.25', '-2;2', '34.2', '2', '5/12'
+            ]
+        },
+        'toan10-ck2-002': {
+            multipleChoice: [
+                'C', 'D', 'A', 'A', 'A', 'D', 'B', 'D', 'B', 'C',
+                'A', 'D'
+            ],
+            trueFalse: [
+                ['Đúng', 'Sai', 'Đúng', 'Sai'],
+                ['Đúng', 'Sai', 'Sai', 'Đúng'],
+                ['Sai', 'Đúng', 'Sai', 'Đúng']
+            ],
+            shortAnswer: [
+                '0.19', '53', '4', '3.25', '-2;2', '34.2', '2', '5/12'
+            ]
+        },
+        'toan10-ck2-003': {
+            multipleChoice: [
+                'C', 'D', 'A', 'A', 'A', 'D', 'B', 'D', 'B', 'C',
+                'A', 'D'
+            ],
+            trueFalse: [
+                ['Đúng', 'Sai', 'Đúng', 'Sai'],
+                ['Đúng', 'Sai', 'Sai', 'Đúng'],
+                ['Sai', 'Đúng', 'Sai', 'Đúng']
+            ],
+            shortAnswer: [
+                '0.19', '53', '4', '3.25', '-2;2', '34.2', '2', '5/12'
+            ]
+        },
+        'toan10-ck2-004': {
+            multipleChoice: [
+                'C', 'D', 'A', 'A', 'A', 'D', 'B', 'D', 'B', 'C',
+                'A', 'D'
+            ],
+            trueFalse: [
+                ['Đúng', 'Sai', 'Đúng', 'Sai'],
+                ['Đúng', 'Sai', 'Sai', 'Đúng'],
+                ['Sai', 'Đúng', 'Sai', 'Đúng']
+            ],
+            shortAnswer: [
+                '0.19', '53', '4', '3.25', '-2;2', '34.2', '2', '5/12'
+            ]
+        },
+        'toan11-gk1-001': {
+            multipleChoice: [
+                'C', 'D', 'A', 'A', 'A', 'D', 'B', 'D', 'B', 'C',
+                'A', 'D'
+            ],
+            trueFalse: [
+                ['Đúng', 'Sai', 'Đúng', 'Sai'],
+                ['Đúng', 'Sai', 'Sai', 'Đúng'],
+                ['Sai', 'Đúng', 'Sai', 'Đúng']
+            ],
+            shortAnswer: [
+                '0.19', '53', '4', '3.25', '-2;2', '34.2', '2', '5/12'
+            ]
+        },
+        'toan11-gk1-002': {
+            multipleChoice: [
+                'C', 'D', 'A', 'A', 'A', 'D', 'B', 'D', 'B', 'C',
+                'A', 'D'
+            ],
+            trueFalse: [
+                ['Đúng', 'Sai', 'Đúng', 'Sai'],
+                ['Đúng', 'Sai', 'Sai', 'Đúng'],
+                ['Sai', 'Đúng', 'Sai', 'Đúng']
+            ],
+            shortAnswer: [
+                '0.19', '53', '4', '3.25', '-2;2', '34.2', '2', '5/12'
+            ]
+        },
+        'toan11-gk1-003': {
+            multipleChoice: [
+                'C', 'D', 'A', 'A', 'A', 'D', 'B', 'D', 'B', 'C',
+                'A', 'D'
+            ],
+            trueFalse: [
+                ['Đúng', 'Sai', 'Đúng', 'Sai'],
+                ['Đúng', 'Sai', 'Sai', 'Đúng'],
+                ['Sai', 'Đúng', 'Sai', 'Đúng']
+            ],
+            shortAnswer: [
+                '0.19', '53', '4', '3.25', '-2;2', '34.2', '2', '5/12'
+            ]
+        },
+        'toan11-gk1-004': {
+            multipleChoice: [
+                'C', 'D', 'A', 'A', 'A', 'D', 'B', 'D', 'B', 'C',
+                'A', 'D'
+            ],
+            trueFalse: [
+                ['Đúng', 'Sai', 'Đúng', 'Sai'],
+                ['Đúng', 'Sai', 'Sai', 'Đúng'],
+                ['Sai', 'Đúng', 'Sai', 'Đúng']
+            ],
+            shortAnswer: [
+                '0.19', '53', '4', '3.25', '-2;2', '34.2', '2', '5/12'
+            ]
+        },
+        'toan11-ck1-001': {
+            multipleChoice: [
+                'C', 'D', 'A', 'A', 'A', 'D', 'B', 'D', 'B', 'C',
+                'A', 'D'
+            ],
+            trueFalse: [
+                ['Đúng', 'Sai', 'Đúng', 'Sai'],
+                ['Đúng', 'Sai', 'Sai', 'Đúng'],
+                ['Sai', 'Đúng', 'Sai', 'Đúng']
+            ],
+            shortAnswer: [
+                '0.19', '53', '4', '3.25', '-2;2', '34.2', '2', '5/12'
+            ]
+        },'toan11-ck1-002': {
+            multipleChoice: [
+                'C', 'D', 'A', 'A', 'A', 'D', 'B', 'D', 'B', 'C',
+                'A', 'D'
+            ],
+            trueFalse: [
+                ['Đúng', 'Sai', 'Đúng', 'Sai'],
+                ['Đúng', 'Sai', 'Sai', 'Đúng'],
+                ['Sai', 'Đúng', 'Sai', 'Đúng']
+            ],
+            shortAnswer: [
+                '0.19', '53', '4', '3.25', '-2;2', '34.2', '2', '5/12'
+            ]
+        },
+        'toan11-ck1-003': {
+            multipleChoice: [
+                'C', 'D', 'A', 'A', 'A', 'D', 'B', 'D', 'B', 'C',
+                'A', 'D'
+            ],
+            trueFalse: [
+                ['Đúng', 'Sai', 'Đúng', 'Sai'],
+                ['Đúng', 'Sai', 'Sai', 'Đúng'],
+                ['Sai', 'Đúng', 'Sai', 'Đúng']
+            ],
+            shortAnswer: [
+                '0.19', '53', '4', '3.25', '-2;2', '34.2', '2', '5/12'
+            ]
+        },'toan11-ck1-004': {
+            multipleChoice: [
+                'C', 'D', 'A', 'A', 'A', 'D', 'B', 'D', 'B', 'C',
+                'A', 'D'
+            ],
+            trueFalse: [
+                ['Đúng', 'Sai', 'Đúng', 'Sai'],
+                ['Đúng', 'Sai', 'Sai', 'Đúng'],
+                ['Sai', 'Đúng', 'Sai', 'Đúng']
+            ],
+            shortAnswer: [
+                '0.19', '53', '4', '3.25', '-2;2', '34.2', '2', '5/12'
+            ]
+        },
+        'toan11-gk2-001': {
+            multipleChoice: [
+                'C', 'D', 'A', 'A', 'A', 'D', 'B', 'D', 'B', 'C',
+                'A', 'D'
+            ],
+            trueFalse: [
+                ['Đúng', 'Sai', 'Đúng', 'Sai'],
+                ['Đúng', 'Sai', 'Sai', 'Đúng'],
+                ['Sai', 'Đúng', 'Sai', 'Đúng']
+            ],
+            shortAnswer: [
+                '0.19', '53', '4', '3.25', '-2;2', '34.2', '2', '5/12'
+            ]
+        },
+        'toan11-gk2-002': {
+            multipleChoice: [
+                'C', 'D', 'A', 'A', 'A', 'D', 'B', 'D', 'B', 'C',
+                'A', 'D'
+            ],
+            trueFalse: [
+                ['Đúng', 'Sai', 'Đúng', 'Sai'],
+                ['Đúng', 'Sai', 'Sai', 'Đúng'],
+                ['Sai', 'Đúng', 'Sai', 'Đúng']
+            ],
+            shortAnswer: [
+                '0.19', '53', '4', '3.25', '-2;2', '34.2', '2', '5/12'
+            ]
+        },
+        'toan11-gk2-003': {
+            multipleChoice: [
+                'C', 'D', 'A', 'A', 'A', 'D', 'B', 'D', 'B', 'C',
+                'A', 'D'
+            ],
+            trueFalse: [
+                ['Đúng', 'Sai', 'Đúng', 'Sai'],
+                ['Đúng', 'Sai', 'Sai', 'Đúng'],
+                ['Sai', 'Đúng', 'Sai', 'Đúng']
+            ],
+            shortAnswer: [
+                '0.19', '53', '4', '3.25', '-2;2', '34.2', '2', '5/12'
+            ]
+        },
+        'toan11-gk2-004': {
+            multipleChoice: [
+                'C', 'D', 'A', 'A', 'A', 'D', 'B', 'D', 'B', 'C',
+                'A', 'D'
+            ],
+            trueFalse: [
+                ['Đúng', 'Sai', 'Đúng', 'Sai'],
+                ['Đúng', 'Sai', 'Sai', 'Đúng'],
+                ['Sai', 'Đúng', 'Sai', 'Đúng']
+            ],
+            shortAnswer: [
+                '0.19', '53', '4', '3.25', '-2;2', '34.2', '2', '5/12'
+            ]
+        },
+        'toan11-ck2-001': {
+            multipleChoice: [
+                'C', 'D', 'A', 'A', 'A', 'D', 'B', 'D', 'B', 'C',
+                'A', 'D'
+            ],
+            trueFalse: [
+                ['Đúng', 'Sai', 'Đúng', 'Sai'],
+                ['Đúng', 'Sai', 'Sai', 'Đúng'],
+                ['Sai', 'Đúng', 'Sai', 'Đúng']
+            ],
+            shortAnswer: [
+                '0.19', '53', '4', '3.25', '-2;2', '34.2', '2', '5/12'
+            ]
+        },
+        'toan11-ck2-002': {
+            multipleChoice: [
+                'C', 'D', 'A', 'A', 'A', 'D', 'B', 'D', 'B', 'C',
+                'A', 'D'
+            ],
+            trueFalse: [
+                ['Đúng', 'Sai', 'Đúng', 'Sai'],
+                ['Đúng', 'Sai', 'Sai', 'Đúng'],
+                ['Sai', 'Đúng', 'Sai', 'Đúng']
+            ],
+            shortAnswer: [
+                '0.19', '53', '4', '3.25', '-2;2', '34.2', '2', '5/12'
+            ]
+        },
+        'toan11-ck2-004': {
+            multipleChoice: [
+                'C', 'D', 'A', 'A', 'A', 'D', 'B', 'D', 'B', 'C',
+                'A', 'D'
+            ],
+            trueFalse: [
+                ['Đúng', 'Sai', 'Đúng', 'Sai'],
+                ['Đúng', 'Sai', 'Sai', 'Đúng'],
+                ['Sai', 'Đúng', 'Sai', 'Đúng']
+            ],
+            shortAnswer: [
+                '0.19', '53', '4', '3.25', '-2;2', '34.2', '2', '5/12'
+            ]
+        },
+        'toan12-gk1-001': {
+            multipleChoice: [
+                'C', 'D', 'A', 'A', 'A', 'D', 'B', 'D', 'B', 'C',
+                'A', 'D'
+            ],
+            trueFalse: [
+                ['Đúng', 'Sai', 'Đúng', 'Sai'],
+                ['Đúng', 'Sai', 'Sai', 'Đúng'],
+                ['Sai', 'Đúng', 'Sai', 'Đúng']
+            ],
+            shortAnswer: [
+                '0.19', '53', '4', '3.25', '-2;2', '34.2', '2', '5/12'
+            ]
+        },
+        'toan12-gk1-002': {
+            multipleChoice: [
+                'C', 'D', 'A', 'A', 'A', 'D', 'B', 'D', 'B', 'C',
+                'A', 'D'
+            ],
+            trueFalse: [
+                ['Đúng', 'Sai', 'Đúng', 'Sai'],
+                ['Đúng', 'Sai', 'Sai', 'Đúng'],
+                ['Sai', 'Đúng', 'Sai', 'Đúng']
+            ],
+            shortAnswer: [
+                '0.19', '53', '4', '3.25', '-2;2', '34.2', '2', '5/12'
+            ]
+        },
+        'toan12-gk1-003': {
+            multipleChoice: [
+                'C', 'D', 'A', 'A', 'A', 'D', 'B', 'D', 'B', 'C',
+                'A', 'D'
+            ],
+            trueFalse: [
+                ['Đúng', 'Sai', 'Đúng', 'Sai'],
+                ['Đúng', 'Sai', 'Sai', 'Đúng'],
+                ['Sai', 'Đúng', 'Sai', 'Đúng']
+            ],
+            shortAnswer: [
+                '0.19', '53', '4', '3.25', '-2;2', '34.2', '2', '5/12'
+            ]
+        },
+        'toan12-gk1-004': {
+            multipleChoice: [
+                'C', 'D', 'A', 'A', 'A', 'D', 'B', 'D', 'B', 'C',
+                'A', 'D'
+            ],
+            trueFalse: [
+                ['Đúng', 'Sai', 'Đúng', 'Sai'],
+                ['Đúng', 'Sai', 'Sai', 'Đúng'],
+                ['Sai', 'Đúng', 'Sai', 'Đúng']
+            ],
+            shortAnswer: [
+                '0.19', '53', '4', '3.25', '-2;2', '34.2', '2', '5/12'
+            ]
+        },
+        'toan12-ck1-001': {
+            multipleChoice: [
+                'C', 'D', 'A', 'A', 'A', 'D', 'B', 'D', 'B', 'C',
+                'A', 'D'
+            ],
+            trueFalse: [
+                ['Đúng', 'Sai', 'Đúng', 'Sai'],
+                ['Đúng', 'Sai', 'Sai', 'Đúng'],
+                ['Sai', 'Đúng', 'Sai', 'Đúng']
+            ],
+            shortAnswer: [
+                '0.19', '53', '4', '3.25', '-2;2', '34.2', '2', '5/12'
+            ]
+        },
+        'toan12-ck1-002': {
+            multipleChoice: [
+                'C', 'D', 'A', 'A', 'A', 'D', 'B', 'D', 'B', 'C',
+                'A', 'D'
+            ],
+            trueFalse: [
+                ['Đúng', 'Sai', 'Đúng', 'Sai'],
+                ['Đúng', 'Sai', 'Sai', 'Đúng'],
+                ['Sai', 'Đúng', 'Sai', 'Đúng']
+            ],
+            shortAnswer: [
+                '0.19', '53', '4', '3.25', '-2;2', '34.2', '2', '5/12'
+            ]
+        },
+        'toan12-ck1-003': {
+            multipleChoice: [
+                'C', 'D', 'A', 'A', 'A', 'D', 'B', 'D', 'B', 'C',
+                'A', 'D'
+            ],
+            trueFalse: [
+                ['Đúng', 'Sai', 'Đúng', 'Sai'],
+                ['Đúng', 'Sai', 'Sai', 'Đúng'],
+                ['Sai', 'Đúng', 'Sai', 'Đúng']
+            ],
+            shortAnswer: [
+                '0.19', '53', '4', '3.25', '-2;2', '34.2', '2', '5/12'
+            ]
+        },
+        'toan12-ck1-004': {
+            multipleChoice: [
+                'C', 'D', 'A', 'A', 'A', 'D', 'B', 'D', 'B', 'C',
+                'A', 'D'
+            ],
+            trueFalse: [
+                ['Đúng', 'Sai', 'Đúng', 'Sai'],
+                ['Đúng', 'Sai', 'Sai', 'Đúng'],
+                ['Sai', 'Đúng', 'Sai', 'Đúng']
+            ],
+            shortAnswer: [
+                '0.19', '53', '4', '3.25', '-2;2', '34.2', '2', '5/12'
+            ]
+        },
+        'toan12-gk2-001': {
+            multipleChoice: [
+                'C', 'D', 'A', 'A', 'A', 'D', 'B', 'D', 'B', 'C',
+                'A', 'D'
+            ],
+            trueFalse: [
+                ['Đúng', 'Sai', 'Đúng', 'Sai'],
+                ['Đúng', 'Sai', 'Sai', 'Đúng'],
+                ['Sai', 'Đúng', 'Sai', 'Đúng']
+            ],
+            shortAnswer: [
+                '0.19', '53', '4', '3.25', '-2;2', '34.2', '2', '5/12'
+            ]
+        },
+        'toan12-gk2-002': {
+            multipleChoice: [
+                'C', 'D', 'A', 'A', 'A', 'D', 'B', 'D', 'B', 'C',
+                'A', 'D'
+            ],
+            trueFalse: [
+                ['Đúng', 'Sai', 'Đúng', 'Sai'],
+                ['Đúng', 'Sai', 'Sai', 'Đúng'],
+                ['Sai', 'Đúng', 'Sai', 'Đúng']
+            ],
+            shortAnswer: [
+                '0.19', '53', '4', '3.25', '-2;2', '34.2', '2', '5/12'
+            ]
+        },
+        'toan12-gk2-003': {
+            multipleChoice: [
+                'C', 'D', 'A', 'A', 'A', 'D', 'B', 'D', 'B', 'C',
+                'A', 'D'
+            ],
+            trueFalse: [
+                ['Đúng', 'Sai', 'Đúng', 'Sai'],
+                ['Đúng', 'Sai', 'Sai', 'Đúng'],
+                ['Sai', 'Đúng', 'Sai', 'Đúng']
+            ],
+            shortAnswer: [
+                '0.19', '53', '4', '3.25', '-2;2', '34.2', '2', '5/12'
+            ]
+        },
+        'toan12-gk2-004': {
+            multipleChoice: [
+                'C', 'D', 'A', 'A', 'A', 'D', 'B', 'D', 'B', 'C',
+                'A', 'D'
+            ],
+            trueFalse: [
+                ['Đúng', 'Sai', 'Đúng', 'Sai'],
+                ['Đúng', 'Sai', 'Sai', 'Đúng'],
+                ['Sai', 'Đúng', 'Sai', 'Đúng']
+            ],
+            shortAnswer: [
+                '0.19', '53', '4', '3.25', '-2;2', '34.2', '2', '5/12'
+            ]
+        },
+        'toan12-ck1-001': {
+            multipleChoice: [
+                'C', 'D', 'A', 'A', 'A', 'D', 'B', 'D', 'B', 'C',
+                'A', 'D'
+            ],
+            trueFalse: [
+                ['Đúng', 'Sai', 'Đúng', 'Sai'],
+                ['Đúng', 'Sai', 'Sai', 'Đúng'],
+                ['Sai', 'Đúng', 'Sai', 'Đúng']
+            ],
+            shortAnswer: [
+                '0.19', '53', '4', '3.25', '-2;2', '34.2', '2', '5/12'
+            ]
+        },
+        'toan12-ck1-002': {
+            multipleChoice: [
+                'C', 'D', 'A', 'A', 'A', 'D', 'B', 'D', 'B', 'C',
+                'A', 'D'
+            ],
+            trueFalse: [
+                ['Đúng', 'Sai', 'Đúng', 'Sai'],
+                ['Đúng', 'Sai', 'Sai', 'Đúng'],
+                ['Sai', 'Đúng', 'Sai', 'Đúng']
+            ],
+            shortAnswer: [
+                '0.19', '53', '4', '3.25', '-2;2', '34.2', '2', '5/12'
+            ]
+        },
+        'toan12-ck1-003': {
+            multipleChoice: [
+                'C', 'D', 'A', 'A', 'A', 'D', 'B', 'D', 'B', 'C',
+                'A', 'D'
+            ],
+            trueFalse: [
+                ['Đúng', 'Sai', 'Đúng', 'Sai'],
+                ['Đúng', 'Sai', 'Sai', 'Đúng'],
+                ['Sai', 'Đúng', 'Sai', 'Đúng']
+            ],
+            shortAnswer: [
+                '0.19', '53', '4', '3.25', '-2;2', '34.2', '2', '5/12'
+            ]
+        },
+        'toan12-ck1-004': {
+            multipleChoice: [
+                'C', 'D', 'A', 'A', 'A', 'D', 'B', 'D', 'B', 'C',
+                'A', 'D'
+            ],
+            trueFalse: [
+                ['Đúng', 'Sai', 'Đúng', 'Sai'],
+                ['Đúng', 'Sai', 'Sai', 'Đúng'],
+                ['Sai', 'Đúng', 'Sai', 'Đúng']
+            ],
+            shortAnswer: [
+                '0.19', '53', '4', '3.25', '-2;2', '34.2', '2', '5/12'
+            ]
+        },
+        'toan12-gk2-001': {
+            multipleChoice: [
+                'C', 'D', 'A', 'A', 'A', 'D', 'B', 'D', 'B', 'C',
+                'A', 'D'
+            ],
+            trueFalse: [
+                ['Đúng', 'Sai', 'Đúng', 'Sai'],
+                ['Đúng', 'Sai', 'Sai', 'Đúng'],
+                ['Sai', 'Đúng', 'Sai', 'Đúng']
+            ],
+            shortAnswer: [
+                '0.19', '53', '4', '3.25', '-2;2', '34.2', '2', '5/12'
+            ]
+        },
+        'toan12-gk2-002': {
+            multipleChoice: [
+                'C', 'D', 'A', 'A', 'A', 'D', 'B', 'D', 'B', 'C',
+                'A', 'D'
+            ],
+            trueFalse: [
+                ['Đúng', 'Sai', 'Đúng', 'Sai'],
+                ['Đúng', 'Sai', 'Sai', 'Đúng'],
+                ['Sai', 'Đúng', 'Sai', 'Đúng']
+            ],
+            shortAnswer: [
+                '0.19', '53', '4', '3.25', '-2;2', '34.2', '2', '5/12'
+            ]
+        },
+        'toan12-gk2-003': {
+            multipleChoice: [
+                'C', 'D', 'A', 'A', 'A', 'D', 'B', 'D', 'B', 'C',
+                'A', 'D'
+            ],
+            trueFalse: [
+                ['Đúng', 'Sai', 'Đúng', 'Sai'],
+                ['Đúng', 'Sai', 'Sai', 'Đúng'],
+                ['Sai', 'Đúng', 'Sai', 'Đúng']
+            ],
+            shortAnswer: [
+                '0.19', '53', '4', '3.25', '-2;2', '34.2', '2', '5/12'
+            ]
+        },
+        'toan12-gk2-004': {
+            multipleChoice: [
+                'C', 'D', 'A', 'A', 'A', 'D', 'B', 'D', 'B', 'C',
+                'A', 'D'
+            ],
+            trueFalse: [
+                ['Đúng', 'Sai', 'Đúng', 'Sai'],
+                ['Đúng', 'Sai', 'Sai', 'Đúng'],
+                ['Sai', 'Đúng', 'Sai', 'Đúng']
+            ],
+            shortAnswer: [
+                '0.19', '53', '4', '3.25', '-2;2', '34.2', '2', '5/12'
+            ]
+        },
+        'toan12-ck2-001': {
+            multipleChoice: [
+                'C', 'D', 'A', 'A', 'A', 'D', 'B', 'D', 'B', 'C',
+                'A', 'D'
+            ],
+            trueFalse: [
+                ['Đúng', 'Sai', 'Đúng', 'Sai'],
+                ['Đúng', 'Sai', 'Sai', 'Đúng'],
+                ['Sai', 'Đúng', 'Sai', 'Đúng']
+            ],
+            shortAnswer: [
+                '0.19', '53', '4', '3.25', '-2;2', '34.2', '2', '5/12'
+            ]
+        },
+        'toan12-ck2-002': {
+            multipleChoice: [
+                'C', 'D', 'A', 'A', 'A', 'D', 'B', 'D', 'B', 'C',
+                'A', 'D'
+            ],
+            trueFalse: [
+                ['Đúng', 'Sai', 'Đúng', 'Sai'],
+                ['Đúng', 'Sai', 'Sai', 'Đúng'],
+                ['Sai', 'Đúng', 'Sai', 'Đúng']
+            ],
+            shortAnswer: [
+                '0.19', '53', '4', '3.25', '-2;2', '34.2', '2', '5/12'
+            ]
+        },
+        'toan12-ck2-003': {
+            multipleChoice: [
+                'C', 'D', 'A', 'A', 'A', 'D', 'B', 'D', 'B', 'C',
+                'A', 'D'
+            ],
+            trueFalse: [
+                ['Đúng', 'Sai', 'Đúng', 'Sai'],
+                ['Đúng', 'Sai', 'Sai', 'Đúng'],
+                ['Sai', 'Đúng', 'Sai', 'Đúng']
+            ],
+            shortAnswer: [
+                '0.19', '53', '4', '3.25', '-2;2', '34.2', '2', '5/12'
+            ]
+        },
+        'toan12-ck2-004': {
+            multipleChoice: [
+                'C', 'D', 'A', 'A', 'A', 'D', 'B', 'D', 'B', 'C',
+                'A', 'D'
+            ],
+            trueFalse: [
+                ['Đúng', 'Sai', 'Đúng', 'Sai'],
+                ['Đúng', 'Sai', 'Sai', 'Đúng'],
+                ['Sai', 'Đúng', 'Sai', 'Đúng']
+            ],
+            shortAnswer: [
+                '0.19', '53', '4', '3.25', '-2;2', '34.2', '2', '5/12'
+            ]
+        },
     };
     
     // Hàm hiển thị/ẩn mã đề khi click vào kỳ thi
@@ -993,18 +1744,50 @@ body:-ms-fullscreen .exam-frame {
     // Hàm lấy tên đề thi
     function getExamName(examId) {
         const examNames = {
-            'toan10-gk1': 'Toán 10 - Đề thi giữa kỳ 1',
-            'toan10-ck1': 'Toán 10 - Đề thi cuối kỳ 1',
-            'toan10-gk2': 'Toán 10 - Đề thi giữa kỳ 2',
-            'toan10-ck2': 'Toán 10 - Đề thi cuối kỳ 2',
-            'toan11-gk1': 'Toán 11 - Đề thi giữa kỳ 1',
-            'toan11-ck1': 'Toán 11 - Đề thi cuối kỳ 1',
-            'toan11-gk2': 'Toán 11 - Đề thi giữa kỳ 2',
-            'toan11-ck2': 'Toán 11 - Đề thi cuối kỳ 2',
-            'toan12-gk1': 'Toán 12 - Đề thi giữa kỳ 1',
-            'toan12-ck1': 'Toán 12 - Đề thi cuối kỳ 1',
-            'toan12-gk2': 'Toán 12 - Đề thi giữa kỳ 2',
-            'toan12-ck2': 'Toán 12 - Đề thi cuối kỳ 2'
+            'toan10-gk1-001': 'Toán 10 - Đề kiểm tra giữa kỳ 1 Đề số 1',
+            'toan10-gk1-002': 'Toán 10 - Đề kiểm tra giữa kỳ 1 Đề số 2',
+            'toan10-gk1-003': 'Toán 10 - Đề kiểm tra giữa kỳ 1 Đề số 3',
+            'toan10-ck1-004': 'Toán 10 - Đề kiểm tra cuối kỳ 1 Đề số 4',
+            'toan10-gk2-001': 'Toán 10 - Đề kiểm tra giữa kỳ 2 Đề số 1',
+            'toan10-gk2-002': 'Toán 10 - Đề kiểm tra giữa kỳ 2 Đề số 2',
+            'toan10-gk2-003': 'Toán 10 - Đề kiểm tra giữa kỳ 2 Đề số 3',
+            'toan10-gk2-004': 'Toán 10 - Đề kiểm tra giữa kỳ 2 Đề số 4',
+            'toan10-ck2-001': 'Toán 10 - Đề kiểm tra cuối kỳ 2 Đề số 1',
+            'toan10-ck2-002': 'Toán 10 - Đề kiểm tra cuối kỳ 2 Đề số 2',
+            'toan10-ck2-003': 'Toán 10 - Đề kiểm tra cuối kỳ 2 Đề số 3',
+            'toan10-ck2-004': 'Toán 10 - Đề kiểm tra cuối kỳ 2 Đề số 4',
+            'toan11-gk1-001': 'Toán 11 - Đề kiểm tra giữa kỳ 1 Đề số 1',
+            'toan11-gk1-002': 'Toán 11 - Đề kiểm tra giữa kỳ 1 Đề số 2',
+            'toan11-gk1-003': 'Toán 11 - Đề kiểm tra giữa kỳ 1 Đề số 3',
+            'toan11-gk1-004': 'Toán 11 - Đề kiểm tra giữa kỳ 1 Đề số 4',
+            'toan11-ck1-001': 'Toán 11 - Đề kiểm tra cuối kỳ 1 Đề số 1',
+            'toan11-ck1-002': 'Toán 11 - Đề kiểm tra cuối kỳ 1 Đề số 2',
+            'toan11-ck1-003': 'Toán 11 - Đề kiểm tra cuối kỳ 1 Đề số 3',
+            'toan11-ck1-004': 'Toán 11 - Đề kiểm tra cuối kỳ 1 Đề số 4',
+            'toan11-gk2-001': 'Toán 11 - Đề kiểm tra giữa kỳ 2 Đề số 1',
+            'toan11-gk2-002': 'Toán 11 - Đề kiểm tra giữa kỳ 2 Đề số 2',
+            'toan11-gk2-003': 'Toán 11 - Đề kiểm tra giữa kỳ 2 Đề số 3',
+            'toan11-gk2-004': 'Toán 11 - Đề kiểm tra giữa kỳ 2 Đề số 4',
+            'toan11-ck2-001': 'Toán 11 - Đề kiểm tra cuối kỳ 2 Đề số 1',
+            'toan11-ck2-002': 'Toán 11 - Đề kiểm tra cuối kỳ 2 Đề số 2',
+            'toan11-ck2-003': 'Toán 11 - Đề kiểm tra cuối kỳ 2 Đề số 3',
+            'toan11-ck2-004': 'Toán 11 - Đề kiểm tra cuối kỳ 2 Đề số 4',
+            'toan12-gk1-001': 'Toán 12 - Đề kiểm tra giữa kỳ 1 Đề số 1',
+            'toan12-gk1-002': 'Toán 12 - Đề kiểm tra giữa kỳ 1 Đề số 2',
+            'toan12-gk1-003': 'Toán 12 - Đề kiểm tra giữa kỳ 1 Đề số 3',
+            'toan12-gk1-004': 'Toán 12 - Đề kiểm tra giữa kỳ 1 Đề số 4',
+            'toan12-ck1-001': 'Toán 12 - Đề kiểm tra cuối kỳ 1 Đề số 1',
+            'toan12-ck1-002': 'Toán 12 - Đề kiểm tra cuối kỳ 1 Đề số 2',
+            'toan12-ck1-003': 'Toán 12 - Đề kiểm tra cuối kỳ 1 Đề số 3',
+            'toan12-ck1-004': 'Toán 12 - Đề kiểm tra cuối kỳ 1 Đề số 4',
+            'toan12-gk2-001': 'Toán 12 - Đề kiểm tra giữa kỳ 2 Đề số 1',
+            'toan12-gk2-002': 'Toán 12 - Đề kiểm tra giữa kỳ 2 Đề số 2',
+            'toan12-gk2-003': 'Toán 12 - Đề kiểm tra giữa kỳ 2 Đề số 3',
+            'toan12-gk2-004': 'Toán 12 - Đề kiểm tra giữa kỳ 2 Đề số 4',
+            'toan12-ck2-001': 'Toán 12 - Đề kiểm tra cuối kỳ 2 Đề số 1',
+            'toan12-ck2-002': 'Toán 12 - Đề kiểm tra cuối kỳ 2 Đề số 2',
+            'toan12-ck2-003': 'Toán 12 - Đề kiểm tra cuối kỳ 2 Đề số 3',
+            'toan12-ck2-004': 'Toán 12 - Đề kiểm tra cuối kỳ 2 Đề số 4',
         };
         
         return examNames[examId] || 'Đề thi';
@@ -1028,7 +1811,7 @@ body:-ms-fullscreen .exam-frame {
         document.getElementById('warning-count').textContent = '0';
         
         // Hiển thị đề thi
-        document.getElementById('exam-title').textContent = `${getExamName(selectedExam)} - Mã đề ${selectedExamCode}`;
+        document.getElementById('exam-title').textContent = `${getExamName(selectedExam)} - Đề số ${selectedExamCode}`;
         document.getElementById('exam-description').innerHTML = generateExamContent(selectedExam, selectedExamCode);
         
         // Khởi tạo câu hỏi mẫu
@@ -1052,10 +1835,8 @@ body:-ms-fullscreen .exam-frame {
     // Hàm tạo nội dung đề thi
     function generateExamContent(examId, examCode) {
         // Tạo URL Google Drive cho đề thi
-        // Bạn có thể thay đổi logic này để tạo URL phù hợp với mã đề
         let driveUrl = '';
         
-        // Đây là ví dụ, bạn cần thay đổi theo nhu cầu của bạn
         switch(examId) {
             case 'toan10-gk1':
                 if (examCode === '001') {
@@ -1195,7 +1976,7 @@ body:-ms-fullscreen .exam-frame {
             <div class="exam-instructions">
                 <p><strong>Thời gian làm bài: 60 phút</strong></p>
                 <p><strong>Hình thức thi: Trắc nghiệm kết hợp tự luận</strong></p>
-                <p><strong>Mã đề: ${examCode}</strong></p>
+                <p><strong>Đề: ${examCode}</strong></p>
                 <p><strong>Hướng dẫn chung:</strong></p>
                 <ul>
                     <li>Phần A: Trắc nghiệm nhiều lựa chọn (12 câu × 0.25 điểm = 3 điểm)</li>
@@ -1359,7 +2140,7 @@ body:-ms-fullscreen .exam-frame {
             document.getElementById('score').textContent = `0/10`;
             document.getElementById('score').className = 'score score-zero';
             document.getElementById('result-details').textContent = 
-                `Bài thi ${getExamName(selectedExam)} - Mã đề ${selectedExamCode} của bạn bị hủy do vi phạm quy chế thi.`;
+                `Bài thi ${getExamName(selectedExam)} - Đề ${selectedExamCode} của bạn bị hủy do vi phạm quy chế thi.`;
             document.getElementById('cheat-penalty-message').style.display = 'block';
             document.getElementById('answer-review').style.display = 'none';
             
@@ -1371,7 +2152,7 @@ body:-ms-fullscreen .exam-frame {
             document.getElementById('score').textContent = `${totalScore.toFixed(2)}/10`;
             document.getElementById('score').className = 'score';
             document.getElementById('result-details').textContent = 
-                `Bạn đã hoàn thành bài thi ${getExamName(selectedExam)} - Mã đề ${selectedExamCode} với số điểm ${totalScore.toFixed(2)}/10.`;
+                `Bạn đã hoàn thành bài thi ${getExamName(selectedExam)} - Đề ${selectedExamCode} với số điểm ${totalScore.toFixed(2)}/10.`;
             document.getElementById('cheat-penalty-message').style.display = 'none';
             document.getElementById('answer-review').style.display = 'block';
             
