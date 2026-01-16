@@ -2297,26 +2297,31 @@ body:-ms-fullscreen .exam-frame {
         }
         
         // Tính điểm phần trắc nghiệm đúng/sai
-        for (let i = 1; i <= 3; i++) {
+        const tfCount = answerKey.trueFalse ? answerKey.trueFalse.length : 0;
+        for (let i = 1; i <= tfCount; i++) {
             const correctAnswers = answerKey.trueFalse[i-1];
-            
+            if (!correctAnswers) continue;
+
             // Kiểm tra 4 ý con trong mỗi câu
             const subQuestions = ['a', 'b', 'c', 'd'];
             subQuestions.forEach((sub, index) => {
                 const selectedAnswer = document.querySelector(`input[name="tf${i}_${sub}"]:checked`);
-                if (selectedAnswer && selectedAnswer.value === correctAnswers[index]) {
+                if (selectedAnswer && correctAnswers[index] && selectedAnswer.value === correctAnswers[index]) {
                     tfScore += 0.25; // Mỗi ý đúng được 0.25 điểm
                 }
             });
         }
         
         // Tính điểm phần trả lời ngắn
-        for (let i = 1; i <= 8; i++) {
-            const userAnswer = document.getElementById(`sa${i}`).value.trim();
+        const saCount = answerKey.shortAnswer ? answerKey.shortAnswer.length : 0;
+        for (let i = 1; i <= saCount; i++) {
+            const saElement = document.getElementById(`sa${i}`);
+            if (!saElement) continue;
+            const userAnswer = saElement.value.trim();
             const correctAnswer = answerKey.shortAnswer[i-1];
-            
+
             // So sánh đáp án (có thể thêm logic chuẩn hóa nếu cần)
-            if (userAnswer.toLowerCase() === correctAnswer.toLowerCase()) {
+            if (correctAnswer && userAnswer.toLowerCase() === correctAnswer.toLowerCase()) {
                 saScore += 0.5;
             }
         }
@@ -2357,17 +2362,19 @@ body:-ms-fullscreen .exam-frame {
         
         // Hiển thị đáp án phần đúng/sai
         let tfReview = '<h4>Phần B: Trắc nghiệm đúng/sai (3 điểm)</h4>';
-        for (let i = 1; i <= 3; i++) {
+        const tfReviewCount = answerKey.trueFalse ? answerKey.trueFalse.length : 0;
+        for (let i = 1; i <= tfReviewCount; i++) {
             const correctAnswers = answerKey.trueFalse[i-1];
+            if (!correctAnswers) continue;
             tfReview += `<p><strong>Câu ${i}:</strong></p><ul>`;
-            
+
             const subQuestions = ['a', 'b', 'c', 'd'];
             subQuestions.forEach((sub, index) => {
                 const selectedAnswer = document.querySelector(`input[name="tf${i}_${sub}"]:checked`);
                 const userAnswer = selectedAnswer ? selectedAnswer.value : 'Chưa chọn';
-                const correctAnswer = correctAnswers[index];
+                const correctAnswer = correctAnswers[index] || 'N/A';
                 const isCorrect = userAnswer === correctAnswer;
-                
+
                 tfReview += `<li>Ý ${sub}: `;
                 tfReview += `<span class="user-answer">${userAnswer}</span> `;
                 if (isCorrect) {
@@ -2382,11 +2389,15 @@ body:-ms-fullscreen .exam-frame {
         
         // Hiển thị đáp án phần trả lời ngắn
         let saReview = '<h4>Phần C: Trả lời ngắn (4 điểm)</h4>';
-        for (let i = 1; i <= 8; i++) {
-            const userAnswer = document.getElementById(`sa${i}`).value.trim();
+        const saReviewCount = answerKey.shortAnswer ? answerKey.shortAnswer.length : 0;
+        for (let i = 1; i <= saReviewCount; i++) {
+            const saElement = document.getElementById(`sa${i}`);
+            if (!saElement) continue;
+            const userAnswer = saElement.value.trim();
             const correctAnswer = answerKey.shortAnswer[i-1];
+            if (!correctAnswer) continue;
             const isCorrect = userAnswer.toLowerCase() === correctAnswer.toLowerCase();
-            
+
             saReview += `<p><strong>Câu ${i}:</strong> `;
             saReview += `<span class="user-answer">${userAnswer || 'Chưa trả lời'}</span> `;
             if (isCorrect) {
